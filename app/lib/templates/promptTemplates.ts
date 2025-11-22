@@ -38,9 +38,13 @@ SCORING CALIBRATION PRINCIPLES (READ THIS FIRST):
    - Genuinely cannot assess
    
    NOT for:
-   - "Not perfect" (score lower instead)
    - "Some gaps" (score lower, explain gaps)
    - Different field (apply field adaptations)
+
+7. DESCRIPTION LENGTH CONSISTENCY
+   - Descriptions for credibility components MUST be between 40-50 words.
+   - Ensure descriptions are concise but comprehensive.
+   - This is critical for UI consistency.
 `
 
 export const CALIBRATION_EXAMPLES = `
@@ -105,7 +109,7 @@ You MUST report:
 `
 
 export const FIELD_SPECIFIC_CRITERIA: Record<AcademicField, string> = {
-    'natural-sciences': `
+  'natural-sciences': `
 NATURAL SCIENCES EVALUATION CRITERIA:
 
 Priority Focus:
@@ -128,7 +132,7 @@ Scoring Guide for Methodological Rigor:
 - Low Tier: Weak (significant problems)
 - Bottom Tier: Poor/Invalid
 `,
-    'engineering': `
+  'engineering': `
 ENGINEERING/CS EVALUATION CRITERIA:
 
 Priority Focus:
@@ -143,7 +147,7 @@ What Makes Research Credible:
 - Real-world constraints considered
 - Scalability analysis provided
 `,
-    'medical': `
+  'medical': `
 MEDICAL SCIENCES EVALUATION CRITERIA:
 
 Priority Focus:
@@ -158,7 +162,7 @@ What Makes Research Credible:
 - Power analysis for sample size
 - Conflict of interest fully disclosed
 `,
-    'social-sciences': `
+  'social-sciences': `
 SOCIAL SCIENCES EVALUATION CRITERIA:
 
 Priority Focus:
@@ -173,7 +177,7 @@ What Makes Research Credible:
 - Robust qualitative analysis (if applicable)
 - Reflexivity acknowledged
 `,
-    'humanities': `
+  'humanities': `
 HUMANITIES EVALUATION CRITERIA:
 
 Priority Focus:
@@ -188,7 +192,7 @@ What Makes Research Credible:
 - Theoretical framework clear
 - Interpretations grounded in evidence
 `,
-    'formal-sciences': `
+  'formal-sciences': `
 FORMAL SCIENCES (MATH/LOGIC) EVALUATION CRITERIA:
 
 Priority Focus:
@@ -203,7 +207,7 @@ What Makes Research Credible:
 - Theorems follow logically
 - Edge cases considered
 `,
-    'agricultural': `
+  'agricultural': `
 AGRICULTURAL SCIENCES EVALUATION CRITERIA:
 
 Priority Focus:
@@ -218,7 +222,7 @@ What Makes Research Credible:
 - Economic viability considered
 - Statistical analysis appropriate for field data
 `,
-    'interdisciplinary': `
+  'interdisciplinary': `
 INTERDISCIPLINARY EVALUATION CRITERIA:
 
 Priority Focus:
@@ -236,7 +240,7 @@ What Makes Research Credible:
 }
 
 export function getOutputFormatTemplate(context: FrameworkPromptContext): string {
-    return `
+  return `
 OUTPUT FORMAT:
 Return ONLY valid JSON with this structure:
 

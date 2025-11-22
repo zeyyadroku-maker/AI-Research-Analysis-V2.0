@@ -487,14 +487,9 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                           </div>
                         </div>
                         <div className="relative group/desc flex-grow">
-                          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-left line-clamp-4">
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-left">
                             {component.description}
                           </p>
-                          {/* Hover Tooltip for full text */}
-                          <div className="absolute bottom-full left-0 mb-2 w-full p-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs rounded-lg shadow-xl opacity-0 invisible group-hover/desc:opacity-100 group-hover/desc:visible transition-all z-50 pointer-events-none">
-                            {component.description}
-                            <div className="absolute top-full left-4 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-white"></div>
-                          </div>
                         </div>
 
                         {component.evidence.length > 0 && (

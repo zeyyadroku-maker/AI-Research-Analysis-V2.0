@@ -33,18 +33,18 @@ export default function Navigation({ onLogoClick }: NavigationProps) {
   }
 
   return (
-    <nav className="sticky top-0 z-40 bg-white dark:bg-dark-800/80 backdrop-blur-md border-b border-gray-200 dark:border-dark-700 transition-colors">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
+    <nav className="sticky top-0 z-40 bg-white/70 dark:bg-dark-800/70 backdrop-blur-md border-b border-gray-200 dark:border-dark-700 transition-colors">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2 flex justify-between items-center">
         {/* Logo - Larger and more prominent */}
         <button onClick={handleLogoClick} className="flex items-center hover:opacity-80 transition bg-none border-none p-0 cursor-pointer flex-shrink-0">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 rounded-lg shadow-lg transition-all duration-100 active:scale-95 flex items-center justify-center overflow-hidden">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 transition-all duration-100 active:scale-95 flex items-center justify-center">
             <Image
               src={theme === 'light' ? '/lightmode.png' : '/darkmode.png'}
               alt="Logo"
-              width={112}
-              height={112}
+              width={160}
+              height={160}
               priority
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
         </button>
