@@ -4,24 +4,8 @@ import { fetchDocumentSafe } from '@/app/lib/documentFetcher'
 import { processPdfDocument, processTextDocument } from '@/app/lib/documentProcessor'
 import { classifyDocumentType, classifyAcademicField, getFrameworkGuidelines } from '@/app/lib/adaptiveFramework'
 import { buildFrameworkV2Prompt } from '@/app/lib/frameworkPromptBuilder'
-
-// Helper to ensure confidence is a valid ConfidenceLevel
-const parseConfidence = (conf: any): ConfidenceLevel => {
-  if (typeof conf === 'string') {
-    const upper = conf.toUpperCase()
-    if (['HIGH', 'MEDIUM', 'LOW', 'UNCERTAIN'].includes(upper)) {
-      return upper as ConfidenceLevel
-    }
-  }
-  // Legacy support for 0-100 numbers
-  if (typeof conf === 'number') {
-    if (conf >= 85) return 'HIGH'
-    if (conf >= 60) return 'MEDIUM'
-    if (conf >= 40) return 'LOW'
-    return 'UNCERTAIN'
-  }
-  return 'MEDIUM' // Default
-}
+import { callClaudeAPI } from '@/app/lib/services/analysisService'
+import { processCredibilityScore } from '@/app/lib/utils/analysisUtils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -107,98 +91,17 @@ export async function POST(request: NextRequest) {
 
     console.log(`Prompt length: ${prompt.length} characters`)
 
-    // Call Claude API
-    // Model fallback strategy
-    const models = [
-      { id: 'claude-3-5-sonnet-20240620', maxTokens: 8000 },
-      { id: 'claude-3-opus-20240229', maxTokens: 4000 },
-      { id: 'claude-3-sonnet-20240229', maxTokens: 4000 },
-      { id: 'claude-3-haiku-20240307', maxTokens: 4000 },
-    ]
-
-    let response
-
-
-    for (const modelConfig of models) {
-      console.log(`Attempting analysis with model: ${modelConfig.id}`)
-      try {
-        response = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: modelConfig.id,
-            max_tokens: modelConfig.maxTokens,
-            temperature: 0,
-            system:
-              'You are implementing the Syllogos Research Evaluation Framework v2.0. You are an expert research analyst with deep understanding of academic rigor, bias detection, and honest uncertainty acknowledgment. Your role is to assist researchers, never replace expert judgment. Return ONLY valid JSON with complete transparency about what you can and cannot assess.',
-            messages: [
-              {
-                role: 'user',
-                content: prompt,
-              },
-            ],
-          }),
-        })
-
-        if (response.ok) {
-
-          break
-        }
-
-        if (response.status === 404) {
-          console.warn(`Model ${modelConfig.id} not found (404), trying next model...`)
-          continue
-        }
-
-        // If other error, stop trying
-        break
-      } catch (error) {
-        console.error(`Error calling model ${modelConfig.id}:`, error)
-        // If network error, maybe retry? But for now continue to next model if possible or just fail
-        if (models.indexOf(modelConfig) === models.length - 1) throw error
-      }
-    }
-
-    if (!response || !response.ok) {
-      const errorText = response ? await response.text() : 'No response'
-      console.error('Claude API error status:', response?.status)
-      console.error('Claude API error response:', errorText)
-
-      let errorDetails = { message: 'Unknown error' }
-      try {
-        errorDetails = JSON.parse(errorText)
-      } catch (e) {
-        errorDetails = { message: errorText }
-      }
-
+    // Call Claude API via service
+    let analysisData
+    try {
+      analysisData = await callClaudeAPI(prompt, apiKey)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error calling Claude API'
       return NextResponse.json(
-        {
-          error: `Claude API error: ${response ? response.statusText : 'No response'}`,
-          details: errorDetails,
-          statusCode: response ? response.status : 500,
-        },
-        { status: response ? response.status : 500 }
-      )
-    }
-
-    const data = await response.json()
-    const responseText = data.content[0].text
-
-    // Extract JSON from the response
-    const jsonMatch = responseText.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) {
-      console.error('Could not extract JSON from response:', responseText)
-      return NextResponse.json(
-        { error: 'Failed to parse analysis response' },
+        { error: errorMessage },
         { status: 500 }
       )
     }
-
-    const analysisData = JSON.parse(jsonMatch[0])
 
     // Validate that credibility data exists
     if (!analysisData.credibility) {
@@ -209,7 +112,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate and cap credibility score to prevent exceeding assessment weight maximum
+    // Calculate max weight for validation
     const maxWeight = (
       framework.weights.methodologicalRigor +
       framework.weights.dataTransparency +
@@ -219,58 +122,8 @@ export async function POST(request: NextRequest) {
       framework.weights.logicalConsistency
     )
 
-    const credibilityScore = analysisData.credibility
-    if (!credibilityScore.totalScore && credibilityScore.totalScore !== 0) {
-      console.error('Missing totalScore in credibility data:', credibilityScore)
-      return NextResponse.json(
-        { error: 'Invalid analysis response: missing credibility totalScore' },
-        { status: 500 }
-      )
-    }
-
-    // Cap score to max weight if needed
-    if (credibilityScore.totalScore > maxWeight) {
-      console.warn(
-        `[Score Validation] Credibility score ${credibilityScore.totalScore.toFixed(2)} exceeds maximum weight ${maxWeight.toFixed(2)}. Capping to maximum.`
-      )
-      credibilityScore.totalScore = Math.min(credibilityScore.totalScore, maxWeight)
-    }
-
-    // Add maxTotalScore to credibility object
-    credibilityScore.maxTotalScore = maxWeight
-
-    // Ensure confidence levels are valid strings
-    credibilityScore.overallConfidence = parseConfidence(credibilityScore.overallConfidence)
-
-    // Helper to sanitize component confidence
-    const sanitizeComponent = (comp: any) => {
-      if (!comp) return comp
-      comp.confidence = parseConfidence(comp.confidence)
-      return comp
-    }
-
-    credibilityScore.methodologicalRigor = sanitizeComponent(credibilityScore.methodologicalRigor)
-    credibilityScore.dataTransparency = sanitizeComponent(credibilityScore.dataTransparency)
-    credibilityScore.sourceQuality = sanitizeComponent(credibilityScore.sourceQuality)
-    credibilityScore.authorCredibility = sanitizeComponent(credibilityScore.authorCredibility)
-    credibilityScore.statisticalValidity = sanitizeComponent(credibilityScore.statisticalValidity)
-    credibilityScore.logicalConsistency = sanitizeComponent(credibilityScore.logicalConsistency)
-
-    // Recalculate rating based on percentage
-    const scorePercentage = (credibilityScore.totalScore / maxWeight) * 100
-    if (scorePercentage >= 90) {
-      credibilityScore.rating = 'Exemplary'
-    } else if (scorePercentage >= 70) {
-      credibilityScore.rating = 'Strong'
-    } else if (scorePercentage >= 50) {
-      credibilityScore.rating = 'Moderate'
-    } else if (scorePercentage >= 30) {
-      credibilityScore.rating = 'Weak'
-    } else if (scorePercentage > 0) {
-      credibilityScore.rating = 'Very Poor'
-    } else {
-      credibilityScore.rating = 'Invalid'
-    }
+    // Process and validate credibility score
+    const credibilityScore = processCredibilityScore(analysisData.credibility, maxWeight)
 
     // Framework v2.0: Build result with new components
     const result: AnalysisResult = {
