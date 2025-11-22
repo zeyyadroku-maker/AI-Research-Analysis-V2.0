@@ -109,37 +109,37 @@ export default function Home() {
               title="Confidence Scores"
               description="See exactly how certain the AI is about each assessment. We show you what we know, what we think, and what we can't reliably assess."
               icon={<ShieldCheck className="w-8 h-8" />}
-              colorClass="from-primary-500 to-primary-700"
+              colorClass="from-primary-500/80 to-primary-700/80"
             />
             <FeatureCard
               title="Shows Its Work"
               description="No black-box verdicts. Each credibility score, bias flag, and assessment includes specific evidence from the paper and clear reasoning."
               icon={<FileText className="w-8 h-8" />}
-              colorClass="from-accent-purple to-accent-pink"
+              colorClass="from-purple-500/80 to-pink-500/80"
             />
             <FeatureCard
               title="Adaptive Framework"
               description="Evaluation criteria automatically adjust to your academic discipline. A medical study needs different scrutiny than a humanities essay."
               icon={<Sliders className="w-8 h-8" />}
-              colorClass="from-accent-teal to-primary-500"
+              colorClass="from-teal-500/80 to-primary-500/80"
             />
             <FeatureCard
               title="Citation Verification"
               description="We verify that cited works are real publications, not fabricated references. Catches AI-generated papers that cite non-existent sources."
               icon={<Search className="w-8 h-8" />}
-              colorClass="from-blue-500 to-indigo-600"
+              colorClass="from-blue-500/80 to-indigo-500/80"
             />
             <FeatureCard
               title="Bias Analysis"
               description="Identifies eight types of bias with evidence-backed severity ratings. Detects selection bias, confirmation bias, funding conflicts, and more."
               icon={<AlertTriangle className="w-8 h-8" />}
-              colorClass="from-accent-orange to-red-500"
+              colorClass="from-orange-500/80 to-red-500/80"
             />
             <FeatureCard
               title="Export Analysis"
               description="Download full analysis reports including all credibility scores, bias assessments, methodology evaluation, and evidence."
               icon={<Download className="w-8 h-8" />}
-              colorClass="from-pink-500 to-rose-600"
+              colorClass="from-pink-500/80 to-rose-500/80"
             />
           </div>
         </div>
@@ -160,7 +160,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-1">
-              <div className="font-heading font-bold text-2xl mb-6 bg-gradient-to-r from-[#0284c7] via-[#8b5cf6] via-[#ec4899] to-[#14b8a6] bg-clip-text text-transparent">Syllogos</div>
+              <div className="font-heading font-bold text-2xl mb-6 bg-gradient-to-r from-[#0284c7]/70 via-[#8b5cf6]/70 via-[#ec4899]/70 to-[#14b8a6]/70 bg-clip-text text-transparent">Syllogos</div>
               <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                 Transparency in every assessment. Built for researchers, by researchers.
               </p>

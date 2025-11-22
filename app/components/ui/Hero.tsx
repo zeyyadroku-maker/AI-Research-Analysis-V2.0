@@ -1,15 +1,45 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useRef } from 'react'
 
 export default function Hero() {
+    const containerRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const container = containerRef.current
+        if (!container) return
+
+        const handleMouseMove = (e: MouseEvent) => {
+            const rect = container.getBoundingClientRect()
+            const x = e.clientX - rect.left
+            const y = e.clientY - rect.top
+            container.style.setProperty('--mouse-x', `${x}px`)
+            container.style.setProperty('--mouse-y', `${y}px`)
+        }
+
+        container.addEventListener('mousemove', handleMouseMove)
+        return () => container.removeEventListener('mousemove', handleMouseMove)
+    }, [])
+
     return (
-        <div className="relative overflow-hidden pt-32 pb-20 lg:pt-48 lg:pb-32 bg-grid-pattern">
-            {/* Background Elements */}
+        <div
+            ref={containerRef}
+            className="relative overflow-hidden pt-32 pb-20 lg:pt-48 lg:pb-32 bg-grid-pattern group"
+        >
+            {/* Background Elements - Mouse Following Gradient */}
+            <div
+                className="absolute inset-0 z-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100 pointer-events-none"
+                style={{
+                    background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(14, 165, 233, 0.15), transparent 40%)`
+                }}
+            />
+
+            {/* Static Background Fallback / Base */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full z-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-white/50 to-white dark:via-dark-900/50 dark:to-dark-900" />
-                <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl animate-float" />
-                <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-accent-purple/10 rounded-full blur-3xl animate-float animate-delay-200" />
+                {/* Simplified static glow for when mouse is not present/mobile */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-500/5 rounded-full blur-3xl" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

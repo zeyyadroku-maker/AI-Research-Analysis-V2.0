@@ -193,7 +193,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowExperimental(true)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors text-sm font-medium"
             >
               <Sparkles className="w-4 h-4" />
               <span className="hidden sm:inline">Labs</span>
@@ -201,7 +201,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
 
             <button
               onClick={handleBookmark}
-              className={`p-2 rounded-lg transition-colors ${isBookmarkedState
+              className={`p-2 rounded-xl transition-colors ${isBookmarkedState
                 ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
                 : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-800'
                 }`}
@@ -212,7 +212,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
 
             <button
               onClick={handleExportAnalysis}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors"
+              className="p-2 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors"
               title="Export Analysis"
             >
               <FolderDown className="w-5 h-5" />
@@ -222,7 +222,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
 
             <button
               onClick={onClose}
-              className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              className="p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
               title="Close"
             >
               <X className="w-6 h-6" />
@@ -245,7 +245,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-dark-800 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-left"
+                className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-dark-800 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-colors text-left"
               >
                 <item.icon className="w-4 h-4" />
                 {item.label}
@@ -268,10 +268,10 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                 </div>
                 <div className="space-y-3">
                   {analysis.redFlags.map((flag, idx) => (
-                    <div key={idx} className="bg-white dark:bg-dark-900/50 p-3 rounded-lg border border-red-100 dark:border-red-900/50">
+                    <div key={idx} className="bg-white dark:bg-dark-900/50 p-3 rounded-xl border border-red-100 dark:border-red-900/50">
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-bold text-red-700 dark:text-red-300 text-sm">{flag.type.replace(/_/g, ' ')}</span>
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${flag.severity === 'CRITICAL'
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${flag.severity === 'CRITICAL'
                           ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                           : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                           }`}>
@@ -408,7 +408,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                       <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                       <h3 className="font-bold text-amber-900 dark:text-amber-100 text-sm uppercase tracking-wide">Limitations</h3>
                     </div>
-                    <span className={`font-bold px-2 py-0.5 rounded text-xs ml-4 ${analysis.keyFindings.limitations.severity === 'Major' ? 'bg-red-100 text-red-700' :
+                    <span className={`font-bold px-2 py-0.5 rounded-full text-xs ml-4 ${analysis.keyFindings.limitations.severity === 'Major' ? 'bg-red-100 text-red-700' :
                       analysis.keyFindings.limitations.severity === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
                         'bg-green-100 text-green-700'
                       }`}>
@@ -477,11 +477,11 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                           <h4 className="font-bold text-gray-900 dark:text-white">{component.name}</h4>
                           <div className="flex items-center gap-2">
                             {component.confidence && (
-                              <span className={`text-xs font-bold px-2 py-0.5 rounded border ${getConfidenceBadgeColor(component.confidence as string)}`}>
+                              <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${getConfidenceBadgeColor(component.confidence as string)}`}>
                                 {component.confidence} confidence
                               </span>
                             )}
-                            <span className={`text-xs font-bold px-2 py-0.5 rounded text-white ${getScoreColor(component.score, component.maxScore)}`}>
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full text-white ${getScoreColor(component.score, component.maxScore)}`}>
                               {component.score}/{component.maxScore}
                             </span>
                           </div>
@@ -496,12 +496,12 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                           <div className="flex flex-wrap gap-2 mt-auto">
                             {component.evidence.slice(0, 2).map((e, i) => (
                               <div key={i} className="group/tooltip relative inline-flex">
-                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-gray-100 dark:bg-dark-700 text-xs text-gray-600 dark:text-gray-400 cursor-help hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 dark:bg-dark-700 text-xs text-gray-600 dark:text-gray-400 cursor-help hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors">
                                   <Check className="w-3 h-3 text-green-500" />
                                   <span className="whitespace-normal">{e}</span>
                                 </span>
                                 {/* Tooltip */}
-                                <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs rounded-lg shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50 pointer-events-none">
+                                <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs rounded-xl shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50 pointer-events-none">
                                   <div className="font-bold mb-1">Evidence:</div>
                                   {e}
                                   <div className="absolute top-full left-4 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-white"></div>
