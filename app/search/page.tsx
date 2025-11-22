@@ -8,8 +8,118 @@ import PaginationBar from '../components/PaginationBar'
 import Navigation from '../components/Navigation'
 import FileUploadTab from '../components/FileUploadTab'
 import { Paper, AnalysisResult } from '../types'
+import { processCredibilityScore } from '@/app/lib/utils/analysisUtils'
 
 type TabType = 'search' | 'upload'
+
+// Helper to create an empty/loading analysis result
+const createEmptyAnalysisResult = (paper: Paper, metadata?: any): AnalysisResult => {
+  return {
+    paper: {
+      ...paper,
+      documentType: metadata?.documentType || paper.documentType || 'unknown',
+      field: metadata?.field || paper.field || 'unknown',
+    },
+    classification: {
+      documentType: metadata?.documentType || 'unknown',
+      field: metadata?.field || 'unknown',
+      confidence: 'MEDIUM',
+    },
+    credibility: {
+      totalScore: 0,
+      maxTotalScore: 10,
+      rating: 'Invalid',
+      overallConfidence: 'UNCERTAIN',
+      methodologicalRigor: { name: 'Methodological Rigor', score: 0, maxScore: 2.5, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: 'Pending analysis...' },
+      dataTransparency: { name: 'Data Transparency', score: 0, maxScore: 2.0, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: 'Pending analysis...' },
+      sourceQuality: { name: 'Source Quality', score: 0, maxScore: 1.5, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: 'Pending analysis...' },
+      authorCredibility: { name: 'Author Credibility', score: 0, maxScore: 1.5, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: 'Pending analysis...' },
+      statisticalValidity: { name: 'Statistical Validity', score: 0, maxScore: 1.5, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: 'Pending analysis...' },
+      logicalConsistency: { name: 'Logical Consistency', score: 0, maxScore: 1.0, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: 'Pending analysis...' },
+    },
+    bias: {
+      overallLevel: 'Low',
+      overallConfidence: 'UNCERTAIN',
+      justification: 'Analyzing...',
+      biases: [],
+    },
+    keyFindings: {
+      fundamentals: {
+        title: paper.title,
+        authors: paper.authors,
+        journal: paper.journal || 'Unknown',
+        doi: paper.doi,
+        publicationDate: paper.publicationDate || 'Unknown',
+        articleType: metadata?.documentType || 'Unknown'
+      },
+      researchQuestion: 'Analyzing...',
+      hypothesis: 'Pending...',
+      methodology: {
+        studyDesign: '...',
+        sampleSize: '...',
+        population: '...',
+        setting: '...',
+        samplingMethod: '...',
+        outcomesMeasures: [],
+        statisticalMethods: [],
+        studyDuration: '...'
+      },
+      findings: {
+        primaryFindings: [],
+        secondaryFindings: [],
+        effectSizes: [],
+        clinicalSignificance: '...',
+        unexpectedFindings: []
+      },
+      conclusions: {
+        primaryConclusion: '...',
+        supportedByData: true,
+        practicalImplications: [],
+        futureResearchNeeded: [],
+        recommendations: [],
+        generalizability: '...'
+      },
+      limitations: {
+        severity: 'Minor',
+        authorAcknowledged: [],
+        methodologicalIdentified: []
+      },
+    },
+    perspective: {
+      paradigm: 'Positivist',
+      theoreticalFramework: '...',
+      epistemologicalStance: '...',
+      disciplinaryPerspective: '...',
+      assumptions: { stated: [], unstated: [] },
+      context: { geographic: '...', temporal: '...', institutional: '...' }
+    },
+    redFlags: [],
+    aiLimitations: {
+      cannotAssess: [],
+      uncertainAreas: [],
+      requiresExpertReview: [],
+      requiredExpertise: [],
+      missingInformation: [],
+      confidenceNote: 'Analysis in progress...',
+      uncertaintyAreas: []
+    },
+    humanReview: {
+      priority: 'STANDARD',
+      reason: 'Analysis in progress',
+      suggestedExperts: [],
+      reasons: [],
+      specificAreas: [],
+      expertiseRequired: []
+    },
+    limitations: {
+      unverifiableClaims: [],
+      dataLimitations: [],
+      uncertainties: [],
+      aiConfidenceNote: 'Analysis in progress...',
+    },
+    timestamp: new Date().toISOString(),
+  }
+}
 
 export default function SearchPage() {
   const [activeTab, setActiveTab] = useState<TabType>('search')
@@ -154,6 +264,7 @@ export default function SearchPage() {
     setIsAnalyzing(true)
     setAnalyzingPaperId(paper.id)
     setError(null)
+    setAnalysis(null)
 
     try {
       const fullText = paper.abstract || 'This is a research paper...'
@@ -171,24 +282,168 @@ export default function SearchPage() {
 
       if (!response.ok) {
         const errorData = await response.json()
-
-        // Handle specific error cases
         if (errorData.details?.error?.message?.includes('credit balance')) {
           throw new Error(
             'Claude API credits exhausted. Please add credits to your Anthropic account at console.anthropic.com/account/billing/overview'
           )
         }
-
         const errorMsg = errorData.details?.message || errorData.error || 'Failed to analyze paper'
         throw new Error(errorMsg)
       }
 
-      const result = await response.json() as AnalysisResult
-      setAnalysis(result)
+      if (!response.body) {
+        throw new Error('No response body')
+      }
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let metadata: any = null
+      let fullJsonText = ''
+
+      // Initialize with empty result
+      let currentAnalysis = createEmptyAnalysisResult(paper)
+      setAnalysis(currentAnalysis)
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        buffer += chunk
+
+        const lines = buffer.split('\n')
+        // Keep the last line in buffer if it's incomplete
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          if (!line.trim()) continue
+
+          // Check for metadata (first line)
+          if (!metadata && line.startsWith('{"type":"metadata"')) {
+            try {
+              const parsed = JSON.parse(line)
+              if (parsed.type === 'metadata') {
+                metadata = parsed.data
+                // Update analysis with metadata
+                currentAnalysis = createEmptyAnalysisResult(paper, metadata)
+                setAnalysis(currentAnalysis)
+              }
+            } catch (e) {
+              console.error('Error parsing metadata:', e)
+            }
+            continue
+          }
+
+          // Accumulate JSON text
+          fullJsonText += line
+
+          // Progressive Parsing Strategy
+          // Try to extract complete sections using regex
+          try {
+            // Credibility
+            const credibilityMatch = fullJsonText.match(/"credibility"\s*:\s*(\{[\s\S]*?\})\s*(?:,"bias"|})/)
+            if (credibilityMatch && metadata?.framework) {
+              try {
+                const credibilityData = JSON.parse(credibilityMatch[1])
+                // Calculate scores
+                const maxWeight = (
+                  metadata.framework.weights.methodologicalRigor +
+                  metadata.framework.weights.dataTransparency +
+                  metadata.framework.weights.sourceQuality +
+                  metadata.framework.weights.authorCredibility +
+                  metadata.framework.weights.statisticalValidity +
+                  metadata.framework.weights.logicalConsistency
+                )
+                const processedCredibility = processCredibilityScore(credibilityData, maxWeight)
+                currentAnalysis = { ...currentAnalysis, credibility: processedCredibility }
+                setAnalysis(currentAnalysis)
+              } catch (e) { /* Incomplete JSON */ }
+            }
+
+            // Bias
+            const biasMatch = fullJsonText.match(/"bias"\s*:\s*(\{[\s\S]*?\})\s*(?:,"keyFindings"|})/)
+            if (biasMatch) {
+              try {
+                const biasData = JSON.parse(biasMatch[1])
+                currentAnalysis = { ...currentAnalysis, bias: biasData }
+                setAnalysis(currentAnalysis)
+              } catch (e) { /* Incomplete JSON */ }
+            }
+
+            // Key Findings
+            const findingsMatch = fullJsonText.match(/"keyFindings"\s*:\s*(\{[\s\S]*?\})\s*(?:,"perspective"|})/)
+            if (findingsMatch) {
+              try {
+                const findingsData = JSON.parse(findingsMatch[1])
+                currentAnalysis = { ...currentAnalysis, keyFindings: findingsData }
+                setAnalysis(currentAnalysis)
+              } catch (e) { /* Incomplete JSON */ }
+            }
+
+            // Perspective
+            const perspectiveMatch = fullJsonText.match(/"perspective"\s*:\s*(\{[\s\S]*?\})\s*(?:,"redFlags"|})/)
+            if (perspectiveMatch) {
+              try {
+                const perspectiveData = JSON.parse(perspectiveMatch[1])
+                currentAnalysis = { ...currentAnalysis, perspective: perspectiveData }
+                setAnalysis(currentAnalysis)
+              } catch (e) { /* Incomplete JSON */ }
+            }
+
+          } catch (e) {
+            // Ignore regex errors
+          }
+        }
+      }
+
+      // Final Parse
+      try {
+        // Try to find the main JSON object in the full text
+        const jsonMatch = fullJsonText.match(/\{[\s\S]*\}/)
+        if (jsonMatch) {
+          const finalJson = JSON.parse(jsonMatch[0])
+
+          // Re-process everything to be sure
+          if (metadata?.framework) {
+            const maxWeight = (
+              metadata.framework.weights.methodologicalRigor +
+              metadata.framework.weights.dataTransparency +
+              metadata.framework.weights.sourceQuality +
+              metadata.framework.weights.authorCredibility +
+              metadata.framework.weights.statisticalValidity +
+              metadata.framework.weights.logicalConsistency
+            )
+
+            if (finalJson.credibility) {
+              finalJson.credibility = processCredibilityScore(finalJson.credibility, maxWeight)
+            }
+          }
+
+          // Merge with default structure to ensure all fields exist
+          const finalAnalysis: AnalysisResult = {
+            ...createEmptyAnalysisResult(paper, metadata),
+            ...finalJson,
+            paper: {
+              ...paper,
+              documentType: metadata?.documentType || paper.documentType,
+              field: metadata?.field || paper.field,
+            },
+            timestamp: new Date().toISOString()
+          }
+
+          setAnalysis(finalAnalysis)
+        }
+      } catch (e) {
+        console.error('Final JSON parse error:', e)
+        // If final parse fails, we stick with whatever progressive updates we got
+      }
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred during analysis'
       setError(errorMessage)
       console.error('Analysis error:', err)
+      setAnalysis(null)
     } finally {
       setIsAnalyzing(false)
       setAnalyzingPaperId(null)
@@ -206,8 +461,8 @@ export default function SearchPage() {
           <button
             onClick={() => setActiveTab('search')}
             className={`px-4 py-3 font-medium text-lg border-b-2 transition-all duration-200 ${activeTab === 'search'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+              ? 'border-primary-600 text-primary-600'
+              : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
               }`}
           >
             <div className="flex items-center gap-2">
@@ -220,8 +475,8 @@ export default function SearchPage() {
           <button
             onClick={() => setActiveTab('upload')}
             className={`px-4 py-3 font-medium text-lg border-b-2 transition-all duration-200 ${activeTab === 'upload'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+              ? 'border-primary-600 text-primary-600'
+              : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
               }`}
           >
             <div className="flex items-center gap-2">

@@ -1,10 +1,9 @@
-export async function callClaudeAPI(prompt: string, apiKey: string) {
+export async function callClaudeAPI(prompt: string, apiKey: string, stream: boolean = false) {
     // Model fallback strategy
     const models = [
+        { id: 'claude-sonnet-4-20250514', maxTokens: 8000 },
         { id: 'claude-3-5-sonnet-20240620', maxTokens: 8000 },
         { id: 'claude-3-opus-20240229', maxTokens: 4000 },
-        { id: 'claude-3-sonnet-20240229', maxTokens: 4000 },
-        { id: 'claude-3-haiku-20240307', maxTokens: 4000 },
     ]
 
     let response
@@ -23,6 +22,7 @@ export async function callClaudeAPI(prompt: string, apiKey: string) {
                     model: modelConfig.id,
                     max_tokens: modelConfig.maxTokens,
                     temperature: 0,
+                    stream: stream,
                     system:
                         'You are implementing the Syllogos Research Evaluation Framework v2.0. You are an expert research analyst with deep understanding of academic rigor, bias detection, and honest uncertainty acknowledgment. Your role is to assist researchers, never replace expert judgment. Return ONLY valid JSON with complete transparency about what you can and cannot assess.',
                     messages: [
@@ -65,6 +65,10 @@ export async function callClaudeAPI(prompt: string, apiKey: string) {
         }
 
         throw new Error(`Claude API error: ${response ? response.statusText : 'No response'} - ${JSON.stringify(errorDetails)}`)
+    }
+
+    if (stream) {
+        return response
     }
 
     const data = await response.json()

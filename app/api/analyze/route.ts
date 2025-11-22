@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { AnalysisResult, Paper, ConfidenceLevel } from '@/app/types'
+import { Paper } from '@/app/types'
 import { fetchDocumentSafe } from '@/app/lib/documentFetcher'
 import { processPdfDocument, processTextDocument } from '@/app/lib/documentProcessor'
 import { classifyDocumentType, classifyAcademicField, getFrameworkGuidelines } from '@/app/lib/adaptiveFramework'
 import { buildFrameworkV2Prompt } from '@/app/lib/frameworkPromptBuilder'
 import { callClaudeAPI } from '@/app/lib/services/analysisService'
-import { processCredibilityScore } from '@/app/lib/utils/analysisUtils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -91,10 +90,10 @@ export async function POST(request: NextRequest) {
 
     console.log(`Prompt length: ${prompt.length} characters`)
 
-    // Call Claude API via service
-    let analysisData
+    // Call Claude API via service with streaming enabled
+    let streamResponse
     try {
-      analysisData = await callClaudeAPI(prompt, apiKey)
+      streamResponse = await callClaudeAPI(prompt, apiKey, true)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error calling Claude API'
       return NextResponse.json(
@@ -103,78 +102,69 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate that credibility data exists
-    if (!analysisData.credibility) {
-      console.error('Missing credibility data in analysis response:', analysisData)
-      return NextResponse.json(
-        { error: 'Invalid analysis response: missing credibility assessment' },
-        { status: 500 }
-      )
-    }
+    // Create a stream to parse SSE events and yield text deltas
+    const encoder = new TextEncoder()
+    const decoder = new TextDecoder()
 
-    // Calculate max weight for validation
-    const maxWeight = (
-      framework.weights.methodologicalRigor +
-      framework.weights.dataTransparency +
-      framework.weights.sourceQuality +
-      framework.weights.authorCredibility +
-      framework.weights.statisticalValidity +
-      framework.weights.logicalConsistency
-    )
+    const stream = new ReadableStream({
+      async start(controller) {
+        // Send metadata as the first chunk
+        const metadata = {
+          type: 'metadata',
+          data: {
+            documentType,
+            field,
+            framework
+          }
+        }
+        controller.enqueue(encoder.encode(JSON.stringify(metadata) + '\n'))
 
-    // Process and validate credibility score
-    const credibilityScore = processCredibilityScore(analysisData.credibility, maxWeight)
+        const reader = (streamResponse.body as any).getReader()
+        let buffer = ''
 
-    // Framework v2.0: Build result with new components
-    const result: AnalysisResult = {
-      paper: {
-        ...paper,
-        documentType,
-        field,
-      },
-      classification: analysisData.classification || {
-        documentType,
-        field,
-        confidence: 'MEDIUM' as ConfidenceLevel,
-      },
-      credibility: credibilityScore,
-      bias: analysisData.bias,
-      keyFindings: analysisData.keyFindings,
-      perspective: analysisData.perspective,
-      // Framework v2.0: New transparency components
-      redFlags: analysisData.redFlags || [],
-      aiLimitations: analysisData.aiLimitations || {
-        cannotAssess: [],
-        uncertainAreas: [],
-        requiredExpertise: [],
-        missingInformation: [],
-        confidenceNote: 'Framework v2.0 analysis completed',
-        uncertaintyAreas: [] // Added to match interface
-      },
-      humanReview: analysisData.humanReview || {
-        priority: 'STANDARD',
-        reason: 'Standard peer review recommended', // Changed from reasons to reason
-        suggestedExperts: [],
-        reasons: [], // Added to match interface
-        specificAreas: [], // Added to match interface
-        expertiseRequired: [] // Added to match interface
-      },
-      limitations: analysisData.limitations || {
-        unverifiableClaims: [],
-        dataLimitations: [],
-        uncertainties: [],
-        aiConfidenceNote: 'Analysis completed with available information',
-      },
-      timestamp: new Date().toISOString(),
-    }
+        try {
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
 
-    // Log Framework v2.0 metrics
-    console.log(`Framework v2.0 Analysis Complete:`)
-    console.log(`- Overall Confidence: ${credibilityScore.overallConfidence}`)
-    console.log(`- Red Flags: ${result.redFlags ? result.redFlags.length : 0}`)
-    console.log(`- Human Review Priority: ${result.humanReview.priority}`)
+            const chunk = decoder.decode(value, { stream: true })
+            buffer += chunk
 
-    return NextResponse.json(result)
+            const lines = buffer.split('\n')
+            buffer = lines.pop() || ''
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6)
+                if (data === '[DONE]') continue
+
+                try {
+                  const parsed = JSON.parse(data)
+                  if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+                    controller.enqueue(encoder.encode(parsed.delta.text))
+                  }
+                } catch (e) {
+                  // Ignore parse errors for partial lines
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Stream reading error:', error)
+          controller.error(error)
+        } finally {
+          controller.close()
+        }
+      }
+    })
+
+    // Return the stream
+    return new NextResponse(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Transfer-Encoding': 'chunked',
+      },
+    })
   } catch (error) {
     console.error('Analysis error:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'

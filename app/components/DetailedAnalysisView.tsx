@@ -295,13 +295,27 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                   <Shield className="w-4 h-4" />
                   <span className="text-sm font-bold uppercase tracking-wider">Credibility Score</span>
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-gradient-primary">{analysis.credibility.totalScore.toFixed(1)}</span>
-                  <span className="text-sm text-gray-400 dark:text-gray-500 font-medium">/{analysis.credibility.maxTotalScore ? analysis.credibility.maxTotalScore.toFixed(1) : '10.0'}</span>
-                </div>
-                <div className="mt-2 inline-block px-3 py-1 rounded-full bg-white dark:bg-dark-700 shadow-sm text-xs font-bold text-gray-900 dark:text-white border border-gray-100 dark:border-dark-600">
-                  {analysis.credibility.rating}
-                </div>
+
+                {analysis.credibility.totalScore === 0 && analysis.credibility.rating === 'Invalid' ? (
+                  // Loading State
+                  <div className="flex flex-col items-center">
+                    <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent">
+                      Analyzing...
+                    </div>
+                    <div className="mt-2 h-6 w-24 bg-gray-100 dark:bg-dark-700 rounded-full animate-pulse"></div>
+                  </div>
+                ) : (
+                  // Result State
+                  <>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-gradient-primary">{analysis.credibility.totalScore.toFixed(1)}</span>
+                      <span className="text-sm text-gray-400 dark:text-gray-500 font-medium">/{analysis.credibility.maxTotalScore ? analysis.credibility.maxTotalScore.toFixed(1) : '10.0'}</span>
+                    </div>
+                    <div className="mt-2 inline-block px-3 py-1 rounded-full bg-white dark:bg-dark-700 shadow-sm text-xs font-bold text-gray-900 dark:text-white border border-gray-100 dark:border-dark-600">
+                      {analysis.credibility.rating}
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Bias */}
@@ -310,15 +324,29 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                   <AlertTriangle className={`w-4 h-4 ${analysis.bias.overallLevel === 'Low' ? 'text-green-500' : analysis.bias.overallLevel === 'Medium' ? 'text-yellow-500' : 'text-red-500'}`} />
                   <span className="text-sm font-bold uppercase tracking-wider">Bias Risk</span>
                 </div>
-                <div className={`text-2xl font-bold mb-1 ${analysis.bias.overallLevel === 'Low' ? 'text-green-600 dark:text-green-400' :
-                  analysis.bias.overallLevel === 'Medium' ? 'text-yellow-600 dark:text-yellow-400' :
-                    'text-red-600 dark:text-red-400'
-                  }`}>
-                  {analysis.bias.overallLevel}
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {analysis.bias.justification}
-                </p>
+
+                {analysis.bias.justification === 'Analyzing...' ? (
+                  // Loading State
+                  <div className="flex flex-col items-center">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-green-600 via-teal-600 to-blue-600 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent">
+                      Analyzing...
+                    </div>
+                    <div className="mt-2 h-4 w-32 bg-gray-100 dark:bg-dark-700 rounded-full animate-pulse"></div>
+                  </div>
+                ) : (
+                  // Result State
+                  <>
+                    <div className={`text-2xl font-bold mb-1 ${analysis.bias.overallLevel === 'Low' ? 'text-green-600 dark:text-green-400' :
+                      analysis.bias.overallLevel === 'Medium' ? 'text-yellow-600 dark:text-yellow-400' :
+                        'text-red-600 dark:text-red-400'
+                      }`}>
+                      {analysis.bias.overallLevel}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {analysis.bias.justification}
+                    </p>
+                  </>
+                )}
               </div>
 
               {/* Classification */}
