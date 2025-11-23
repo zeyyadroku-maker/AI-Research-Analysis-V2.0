@@ -137,18 +137,44 @@ body {
   animation-delay: 300ms;
 }
 
+.animate-delay-400 {
+  animation-delay: 400ms;
+}
+
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
 }
 
+@keyframes loading-dot {
+
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+
+  20% {
+    opacity: 1;
+  }
+}
+
 .animate-gradient {
   animation: gradient 3s ease infinite;
+}
+
+.animate-dot {
+  animation: loading-dot 1.4s infinite both;
+}
+
+.animate-gradient-dot {
+  animation: gradient 3s ease infinite, loading-dot 1.4s infinite both;
 }

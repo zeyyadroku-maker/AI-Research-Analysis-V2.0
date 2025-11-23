@@ -1,9 +1,9 @@
-export async function callClaudeAPI(prompt: string, apiKey: string, stream: boolean = false) {
+export async function callClaudeAPI(prompt: string, apiKey: string, stream: boolean = false, pdfData?: string) {
     // Model fallback strategy
     const models = [
+        { id: 'claude-sonnet-4-5-20250929', maxTokens: 8000 },
         { id: 'claude-sonnet-4-20250514', maxTokens: 8000 },
-        { id: 'claude-3-5-sonnet-20240620', maxTokens: 8000 },
-        { id: 'claude-3-opus-20240229', maxTokens: 4000 },
+        { id: 'claude-haiku-4-5-20251001', maxTokens: 8000 },
     ]
 
     let response
@@ -11,6 +11,33 @@ export async function callClaudeAPI(prompt: string, apiKey: string, stream: bool
     for (const modelConfig of models) {
         console.log(`Attempting analysis with model: ${modelConfig.id}`)
         try {
+            const messages: any[] = []
+
+            if (pdfData) {
+                messages.push({
+                    role: 'user',
+                    content: [
+                        {
+                            type: 'document',
+                            source: {
+                                type: 'base64',
+                                media_type: 'application/pdf',
+                                data: pdfData
+                            }
+                        },
+                        {
+                            type: 'text',
+                            text: prompt
+                        }
+                    ]
+                })
+            } else {
+                messages.push({
+                    role: 'user',
+                    content: prompt
+                })
+            }
+
             response = await fetch('https://api.anthropic.com/v1/messages', {
                 method: 'POST',
                 headers: {
@@ -25,12 +52,7 @@ export async function callClaudeAPI(prompt: string, apiKey: string, stream: bool
                     stream: stream,
                     system:
                         'You are implementing the Syllogos Research Evaluation Framework v2.0. You are an expert research analyst with deep understanding of academic rigor, bias detection, and honest uncertainty acknowledgment. Your role is to assist researchers, never replace expert judgment. Return ONLY valid JSON with complete transparency about what you can and cannot assess.',
-                    messages: [
-                        {
-                            role: 'user',
-                            content: prompt,
-                        },
-                    ],
+                    messages: messages,
                 }),
             })
 

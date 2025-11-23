@@ -54,8 +54,8 @@ export interface CredibilityScore {
 // Red Flag Detection (Framework v2.0)
 export interface RedFlag {
   type: 'INDUSTRY_BIAS' | 'PREDATORY_JOURNAL' | 'STATISTICAL_ANOMALY' |
-        'MISSING_ETHICS' | 'CONTRADICTIONS' | 'NOVEL_HIGH_STAKES' | 
-        'FUNDING_BIAS' | 'INTERNAL_CONTRADICTION' // Added from v2.0 spec
+  'MISSING_ETHICS' | 'CONTRADICTIONS' | 'NOVEL_HIGH_STAKES' |
+  'FUNDING_BIAS' | 'INTERNAL_CONTRADICTION' // Added from v2.0 spec
   description: string
   severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'WARNING' // Unified severity levels
   evidence?: string // Optional to maintain compatibility if needed
@@ -67,7 +67,7 @@ export interface RedFlag {
 // Bias Detection (Enhanced for Framework v2.0)
 export interface BiasDetection {
   type: 'Selection' | 'Confirmation' | 'Publication' | 'Reporting' |
-        'Funding' | 'Citation' | 'Demographic' | 'Measurement'
+  'Funding' | 'Citation' | 'Demographic' | 'Measurement'
   evidence: string
   severity: 'Low' | 'Medium' | 'High'
   confidence: ConfidenceLevel // Confidence in bias detection
@@ -78,7 +78,7 @@ export interface BiasDetection {
 
 export interface BiasAnalysis {
   biases: BiasDetection[]
-  overallLevel: 'Low' | 'Medium' | 'High'
+  overallLevel: 'Minimal' | 'Low' | 'Medium' | 'High'
   overallConfidence: ConfidenceLevel // NEW: Overall confidence in bias assessment
   justification: string
 }

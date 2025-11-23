@@ -259,54 +259,57 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
             {/* AI Disclaimer */}
             <AIDisclaimerBanner compact={true} />
 
-            {/* Red Flag Alerts */}
-            {analysis.redFlags && analysis.redFlags.length > 0 && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 animate-fade-in">
-                <div className="flex items-center gap-3 mb-3">
-                  <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
-                  <h3 className="text-lg font-bold text-red-900 dark:text-red-100">Critical Issues Detected</h3>
-                </div>
-                <div className="space-y-3">
-                  {analysis.redFlags.map((flag, idx) => (
-                    <div key={idx} className="bg-white dark:bg-dark-900/50 p-3 rounded-xl border border-red-100 dark:border-red-900/50">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-red-700 dark:text-red-300 text-sm">{flag.type.replace(/_/g, ' ')}</span>
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${flag.severity === 'CRITICAL'
-                          ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                          }`}>
-                          {flag.severity}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">{flag.evidence}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 italic">Recommendation: {flag.recommendation}</p>
-                    </div>
-                  ))}
+            {analysis.credibility.totalScore === 0 && analysis.credibility.rating === 'Invalid' ? (
+              // Global Loading State
+              <div className="flex flex-col items-center justify-center h-[60vh] animate-fade-in">
+                <div className="text-5xl font-bold pb-2 text-center">
+                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent">
+                    Loading
+                  </span>
+                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient-dot bg-clip-text text-transparent">.</span>
+                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient-dot animate-delay-200 bg-clip-text text-transparent">.</span>
+                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient-dot animate-delay-400 bg-clip-text text-transparent">.</span>
                 </div>
               </div>
-            )}
-
-            {/* --- ROW 1: Unified Scorecard Header --- */}
-            <div id="scorecard" className="bg-gray-50 dark:bg-dark-800/50 rounded-2xl p-1 border border-gray-100 dark:border-dark-700 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-dark-700">
-
-              {/* Credibility */}
-              <div className="p-6 flex flex-col items-center justify-center text-center">
-                <div className="flex items-center gap-2 mb-2 text-gray-500 dark:text-gray-400">
-                  <Shield className="w-4 h-4" />
-                  <span className="text-sm font-bold uppercase tracking-wider">Credibility Score</span>
-                </div>
-
-                {analysis.credibility.totalScore === 0 && analysis.credibility.rating === 'Invalid' ? (
-                  // Loading State
-                  <div className="flex flex-col items-center">
-                    <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent">
-                      Analyzing...
+            ) : (
+              // Analysis Content
+              <div className="space-y-8 animate-fade-in">
+                {/* Red Flag Alerts */}
+                {analysis.redFlags && analysis.redFlags.length > 0 && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+                      <h3 className="text-lg font-bold text-red-900 dark:text-red-100">Critical Issues Detected</h3>
                     </div>
-                    <div className="mt-2 h-6 w-24 bg-gray-100 dark:bg-dark-700 rounded-full animate-pulse"></div>
+                    <div className="space-y-3">
+                      {analysis.redFlags.map((flag, idx) => (
+                        <div key={idx} className="bg-white dark:bg-dark-900/50 p-3 rounded-xl border border-red-100 dark:border-red-900/50">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-bold text-red-700 dark:text-red-300 text-sm">{flag.type.replace(/_/g, ' ')}</span>
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${flag.severity === 'CRITICAL'
+                              ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                              : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                              }`}>
+                              {flag.severity}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">{flag.evidence}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 italic">Recommendation: {flag.recommendation}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ) : (
-                  // Result State
-                  <>
+                )}
+
+                {/* --- ROW 1: Unified Scorecard Header --- */}
+                <div id="scorecard" className="bg-gray-50 dark:bg-dark-800/50 rounded-2xl p-1 border border-gray-100 dark:border-dark-700 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-dark-700">
+
+                  {/* Credibility */}
+                  <div className="p-6 flex flex-col items-center justify-center text-center">
+                    <div className="flex items-center gap-2 mb-2 text-gray-500 dark:text-gray-400">
+                      <Shield className="w-4 h-4" />
+                      <span className="text-sm font-bold uppercase tracking-wider">Credibility Score</span>
+                    </div>
                     <div className="flex items-baseline gap-2">
                       <span className="text-4xl font-bold text-gradient-primary">{analysis.credibility.totalScore.toFixed(1)}</span>
                       <span className="text-sm text-gray-400 dark:text-gray-500 font-medium">/{analysis.credibility.maxTotalScore ? analysis.credibility.maxTotalScore.toFixed(1) : '10.0'}</span>
@@ -314,257 +317,257 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                     <div className="mt-2 inline-block px-3 py-1 rounded-full bg-white dark:bg-dark-700 shadow-sm text-xs font-bold text-gray-900 dark:text-white border border-gray-100 dark:border-dark-600">
                       {analysis.credibility.rating}
                     </div>
-                  </>
-                )}
-              </div>
-
-              {/* Bias */}
-              <div className="p-6 flex flex-col items-center justify-center text-center">
-                <div className="flex items-center gap-2 mb-2 text-gray-500 dark:text-gray-400">
-                  <AlertTriangle className={`w-4 h-4 ${analysis.bias.overallLevel === 'Low' ? 'text-green-500' : analysis.bias.overallLevel === 'Medium' ? 'text-yellow-500' : 'text-red-500'}`} />
-                  <span className="text-sm font-bold uppercase tracking-wider">Bias Risk</span>
-                </div>
-
-                {analysis.bias.justification === 'Analyzing...' ? (
-                  // Loading State
-                  <div className="flex flex-col items-center">
-                    <div className="text-2xl font-bold bg-gradient-to-r from-green-600 via-teal-600 to-blue-600 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent">
-                      Analyzing...
-                    </div>
-                    <div className="mt-2 h-4 w-32 bg-gray-100 dark:bg-dark-700 rounded-full animate-pulse"></div>
-                  </div>
-                ) : (
-                  // Result State
-                  <>
-                    <div className={`text-2xl font-bold mb-1 ${analysis.bias.overallLevel === 'Low' ? 'text-green-600 dark:text-green-400' :
-                      analysis.bias.overallLevel === 'Medium' ? 'text-yellow-600 dark:text-yellow-400' :
-                        'text-red-600 dark:text-red-400'
-                      }`}>
-                      {analysis.bias.overallLevel}
-                    </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {analysis.bias.justification}
-                    </p>
-                  </>
-                )}
-              </div>
-
-              {/* Classification */}
-              <div className="p-6 flex flex-col items-center justify-center text-center bg-white dark:bg-transparent">
-                <div className="flex items-center gap-2 mb-2 text-gray-500 dark:text-gray-400">
-                  <Brain className="w-4 h-4 text-purple-500" />
-                  <span className="text-sm font-bold uppercase tracking-wider">Classification</span>
-                </div>
-                <div className="w-full flex justify-center">
-                  <DocumentTypeIndicator
-                    documentTypeString={analysis.paper.documentType}
-                    field={analysis.paper.field}
-                    subfield={analysis.paper.subfield}
-                    domain={analysis.paper.domain}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* --- ROW 2: Findings & Context (Full Width) --- */}
-            <div id="findings" className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-              {/* Key Findings (Left 2/3) */}
-              <div className="xl:col-span-2 bg-white dark:bg-dark-800 rounded-2xl p-6 border border-gray-200 dark:border-dark-700 shadow-sm h-full">
-                <div className="flex items-center gap-3 mb-6">
-                  <FileText className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                  <h3 className="font-bold text-gray-900 dark:text-white">Key Findings & Methodology</h3>
-                </div>
-
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Research Question</h4>
-                    <p className="text-lg font-medium text-gray-900 dark:text-white leading-relaxed">
-                      {analysis.keyFindings.researchQuestion}
-                    </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 dark:bg-dark-700/30 rounded-xl p-4">
-                    {[
-                      { label: 'Study Design', val: analysis.keyFindings.methodology.studyDesign },
-                      { label: 'Sample Size', val: analysis.keyFindings.methodology.sampleSize },
-                      { label: 'Population', val: analysis.keyFindings.methodology.population },
-                      { label: 'Setting', val: analysis.keyFindings.methodology.setting },
-                    ].map((item, i) => (
-                      <div key={i}>
-                        <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">{item.label}</h4>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">{item.val}</p>
+                  {/* Bias */}
+                  <div className="p-6 flex flex-col items-center justify-center text-center">
+                    <div className="flex items-center gap-2 mb-2 text-gray-500 dark:text-gray-400">
+                      <AlertTriangle className={`w-4 h-4 ${analysis.bias.overallLevel === 'Low' || analysis.bias.overallLevel === 'Minimal' ? 'text-green-500' : analysis.bias.overallLevel === 'Medium' ? 'text-yellow-500' : 'text-red-500'}`} />
+                      <span className="text-sm font-bold uppercase tracking-wider">Bias Risk</span>
+                    </div>
+
+                    {analysis.bias.justification === 'Analyzing...' ? (
+                      // Loading State
+                      <div className="flex flex-col items-center">
+                        <div className="text-2xl font-bold bg-gradient-to-r from-green-600 via-teal-600 to-blue-600 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent">
+                          Analyzing...
+                        </div>
+                        <div className="mt-2 h-4 w-32 bg-gray-100 dark:bg-dark-700 rounded-full animate-pulse"></div>
                       </div>
-                    ))}
+                    ) : (
+                      // Result State
+                      <>
+                        <div className={`text-2xl font-bold mb-1 ${analysis.bias.overallLevel === 'Low' || analysis.bias.overallLevel === 'Minimal' ? 'text-green-600 dark:text-green-400' :
+                          analysis.bias.overallLevel === 'Medium' ? 'text-yellow-600 dark:text-yellow-400' :
+                            'text-red-600 dark:text-red-400'
+                          }`}>
+                          {analysis.bias.overallLevel}
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {analysis.bias.justification}
+                        </p>
+                      </>
+                    )}
                   </div>
 
-                  <div>
-                    <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Primary Findings</h4>
-                    <ul className="space-y-3">
-                      {analysis.keyFindings.findings.primaryFindings.map((finding, i) => (
-                        <li key={i} className="flex gap-3 text-gray-700 dark:text-gray-300">
-                          <div className="w-1.5 h-1.5 rounded-full bg-primary-500 mt-2 flex-shrink-0"></div>
-                          <span className="leading-relaxed">{finding}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="pt-4 border-t border-gray-100 dark:border-dark-700">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Conclusion</h4>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${analysis.keyFindings.conclusions.supportedByData
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                        : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                        }`}>
-                        {analysis.keyFindings.conclusions.supportedByData ? 'Supported by Data' : 'Not Fully Supported'}
-                      </span>
+                  {/* Classification */}
+                  <div className="p-6 flex flex-col items-center justify-center text-center bg-white dark:bg-transparent">
+                    <div className="flex items-center gap-2 mb-2 text-gray-500 dark:text-gray-400">
+                      <Brain className="w-4 h-4 text-purple-500" />
+                      <span className="text-sm font-bold uppercase tracking-wider">Classification</span>
                     </div>
-                    <p className="text-gray-800 dark:text-gray-200 italic border-l-4 border-primary-200 dark:border-primary-800 pl-4 py-1">
-                      &quot;{analysis.keyFindings.conclusions.primaryConclusion}&quot;
-                    </p>
+                    <div className="w-full flex justify-center">
+                      <DocumentTypeIndicator
+                        documentTypeString={analysis.paper.documentType}
+                        field={analysis.paper.field}
+                        subfield={analysis.paper.subfield}
+                        domain={analysis.paper.domain}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Unified Sidebar Stack (Right 1/3) */}
-              <div className="space-y-6">
-                {/* Context Card (Unified Limitations & Perspective) */}
-                <div className="bg-gray-50 dark:bg-dark-800/30 rounded-2xl border border-gray-100 dark:border-dark-700 overflow-hidden">
-                  {/* Limitations Header */}
-                  <div className="px-6 py-4 border-b border-gray-100 dark:border-dark-700 bg-amber-50/50 dark:bg-amber-900/10 flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                      <h3 className="font-bold text-amber-900 dark:text-amber-100 text-sm uppercase tracking-wide">Limitations</h3>
+                {/* --- ROW 2: Findings & Context (Full Width) --- */}
+                <div id="findings" className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+                  {/* Key Findings (Left 2/3) */}
+                  <div className="xl:col-span-2 bg-white dark:bg-dark-800 rounded-2xl p-6 border border-gray-200 dark:border-dark-700 shadow-sm h-full">
+                    <div className="flex items-center gap-3 mb-6">
+                      <FileText className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                      <h3 className="font-bold text-gray-900 dark:text-white">Key Findings & Methodology</h3>
                     </div>
-                    <span className={`font-bold px-2 py-0.5 rounded-full text-xs ml-4 ${analysis.keyFindings.limitations.severity === 'Major' ? 'bg-red-100 text-red-700' :
-                      analysis.keyFindings.limitations.severity === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-green-100 text-green-700'
-                      }`}>
-                      {analysis.keyFindings.limitations.severity}
-                    </span>
-                  </div>
 
-                  <div className="p-6 border-b border-gray-100 dark:border-dark-700">
-                    <ul className="space-y-2">
-                      {analysis.keyFindings.limitations.authorAcknowledged.map((limit, i) => (
-                        <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex gap-2">
-                          <span className="text-amber-500">•</span>
-                          {limit}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Perspective Header */}
-                  <div className="px-6 py-3 bg-gray-100/50 dark:bg-dark-800/50 border-b border-gray-100 dark:border-dark-700">
-                    <h3 className="font-bold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">Research Perspective</h3>
-                  </div>
-
-                  <div className="p-6 space-y-4">
-                    {[
-                      { label: 'Paradigm', val: analysis.perspective.paradigm },
-                      { label: 'Epistemology', val: analysis.perspective.epistemologicalStance },
-                      { label: 'Framework', val: analysis.perspective.theoreticalFramework },
-                    ].map((item, i) => (
-                      <div key={i}>
-                        <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase block mb-1">{item.label}</span>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">{item.val}</p>
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Research Question</h4>
+                        <p className="text-lg font-medium text-gray-900 dark:text-white leading-relaxed">
+                          {analysis.keyFindings.researchQuestion}
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* --- ROW 3: Detailed Assessment (Collapsible) --- */}
-            <div id="detailed" className="bg-gray-50 dark:bg-dark-800/30 rounded-xl border border-gray-100 dark:border-dark-700 overflow-hidden transition-all duration-300">
-              <button
-                onClick={() => toggleSection('detailed')}
-                className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-dark-800/50 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <BarChart2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">Detailed Assessment</h3>
-                </div>
-                {expandedSection === 'detailed' || expandedSection === 'all' ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
-              </button>
-
-              {(expandedSection === 'detailed' || expandedSection === 'all') && (
-                <div className="p-4 sm:p-6 pt-0 animate-fade-in">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[
-                      { key: 'methodologicalRigor', component: analysis.credibility.methodologicalRigor },
-                      { key: 'dataTransparency', component: analysis.credibility.dataTransparency },
-                      { key: 'sourceQuality', component: analysis.credibility.sourceQuality },
-                      { key: 'authorCredibility', component: analysis.credibility.authorCredibility },
-                      { key: 'statisticalValidity', component: analysis.credibility.statisticalValidity },
-                      { key: 'logicalConsistency', component: analysis.credibility.logicalConsistency },
-                    ].map(({ key, component }) => (
-                      <div key={key} className="bg-white dark:bg-dark-800 rounded-xl p-5 border border-gray-100 dark:border-dark-700 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col group">
-                        <div className="flex justify-between items-center mb-3">
-                          <h4 className="font-bold text-gray-900 dark:text-white">{component.name}</h4>
-                          <div className="flex items-center gap-2">
-                            {component.confidence && (
-                              <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${getConfidenceBadgeColor(component.confidence as string)}`}>
-                                {component.confidence} confidence
-                              </span>
-                            )}
-                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full text-white ${getScoreColor(component.score, component.maxScore)}`}>
-                              {component.score}/{component.maxScore}
-                            </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 dark:bg-dark-700/30 rounded-xl p-4">
+                        {[
+                          { label: 'Study Design', val: analysis.keyFindings.methodology.studyDesign },
+                          { label: 'Sample Size', val: analysis.keyFindings.methodology.sampleSize },
+                          { label: 'Population', val: analysis.keyFindings.methodology.population },
+                          { label: 'Setting', val: analysis.keyFindings.methodology.setting },
+                        ].map((item, i) => (
+                          <div key={i}>
+                            <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">{item.label}</h4>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">{item.val}</p>
                           </div>
-                        </div>
-                        <div className="relative group/desc flex-grow">
-                          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-left">
-                            {component.description}
-                          </p>
-                        </div>
+                        ))}
+                      </div>
 
-                        {component.evidence.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-auto">
-                            {component.evidence.slice(0, 2).map((e, i) => (
-                              <div key={i} className="group/tooltip relative inline-flex">
-                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 dark:bg-dark-700 text-xs text-gray-600 dark:text-gray-400 cursor-help hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors">
-                                  <Check className="w-3 h-3 text-green-500" />
-                                  <span className="whitespace-normal">{e}</span>
+                      <div>
+                        <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Primary Findings</h4>
+                        <ul className="space-y-3">
+                          {analysis.keyFindings.findings.primaryFindings.map((finding, i) => (
+                            <li key={i} className="flex gap-3 text-gray-700 dark:text-gray-300">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary-500 mt-2 flex-shrink-0"></div>
+                              <span className="leading-relaxed">{finding}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="pt-4 border-t border-gray-100 dark:border-dark-700">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Conclusion</h4>
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${analysis.keyFindings.conclusions.supportedByData
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                            : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                            }`}>
+                            {analysis.keyFindings.conclusions.supportedByData ? 'Supported by Data' : 'Not Fully Supported'}
+                          </span>
+                        </div>
+                        <p className="text-gray-800 dark:text-gray-200 italic border-l-4 border-primary-200 dark:border-primary-800 pl-4 py-1">
+                          &quot;{analysis.keyFindings.conclusions.primaryConclusion}&quot;
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Unified Sidebar Stack (Right 1/3) */}
+                  <div className="space-y-6">
+                    {/* Context Card (Unified Limitations & Perspective) */}
+                    <div className="bg-gray-50 dark:bg-dark-800/30 rounded-2xl border border-gray-100 dark:border-dark-700 overflow-hidden">
+                      {/* Limitations Header */}
+                      <div className="px-6 py-4 border-b border-gray-100 dark:border-dark-700 bg-amber-50/50 dark:bg-amber-900/10 flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                          <h3 className="font-bold text-amber-900 dark:text-amber-100 text-sm uppercase tracking-wide">Limitations</h3>
+                        </div>
+                        <span className={`font-bold px-2 py-0.5 rounded-full text-xs ml-4 ${analysis.keyFindings.limitations.severity === 'Major' ? 'bg-red-100 text-red-700' :
+                          analysis.keyFindings.limitations.severity === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-green-100 text-green-700'
+                          }`}>
+                          {analysis.keyFindings.limitations.severity}
+                        </span>
+                      </div>
+
+                      <div className="p-6 border-b border-gray-100 dark:border-dark-700">
+                        <ul className="space-y-2">
+                          {analysis.keyFindings.limitations.authorAcknowledged.map((limit, i) => (
+                            <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex gap-2">
+                              <span className="text-amber-500">•</span>
+                              {limit}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Perspective Header */}
+                      <div className="px-6 py-3 bg-gray-100/50 dark:bg-dark-800/50 border-b border-gray-100 dark:border-dark-700">
+                        <h3 className="font-bold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">Research Perspective</h3>
+                      </div>
+
+                      <div className="p-6 space-y-4">
+                        {[
+                          { label: 'Paradigm', val: analysis.perspective.paradigm },
+                          { label: 'Epistemology', val: analysis.perspective.epistemologicalStance },
+                          { label: 'Framework', val: analysis.perspective.theoreticalFramework },
+                        ].map((item, i) => (
+                          <div key={i}>
+                            <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase block mb-1">{item.label}</span>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">{item.val}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* --- ROW 3: Detailed Assessment (Collapsible) --- */}
+                <div id="detailed" className="bg-gray-50 dark:bg-dark-800/30 rounded-xl border border-gray-100 dark:border-dark-700 overflow-hidden transition-all duration-300">
+                  <button
+                    onClick={() => toggleSection('detailed')}
+                    className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-dark-800/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <BarChart2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">Detailed Assessment</h3>
+                    </div>
+                    {expandedSection === 'detailed' || expandedSection === 'all' ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+                  </button>
+
+                  {(expandedSection === 'detailed' || expandedSection === 'all') && (
+                    <div className="p-4 sm:p-6 pt-0 animate-fade-in">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {[
+                          { key: 'methodologicalRigor', component: analysis.credibility.methodologicalRigor },
+                          { key: 'dataTransparency', component: analysis.credibility.dataTransparency },
+                          { key: 'sourceQuality', component: analysis.credibility.sourceQuality },
+                          { key: 'authorCredibility', component: analysis.credibility.authorCredibility },
+                          { key: 'statisticalValidity', component: analysis.credibility.statisticalValidity },
+                          { key: 'logicalConsistency', component: analysis.credibility.logicalConsistency },
+                        ].map(({ key, component }) => (
+                          <div key={key} className="bg-white dark:bg-dark-800 rounded-xl p-5 border border-gray-100 dark:border-dark-700 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col group">
+                            <div className="flex justify-between items-center mb-3">
+                              <h4 className="font-bold text-gray-900 dark:text-white">{component.name}</h4>
+                              <div className="flex items-center gap-2">
+                                {component.confidence && (
+                                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${getConfidenceBadgeColor(component.confidence as string)}`}>
+                                    {component.confidence} confidence
+                                  </span>
+                                )}
+                                <span className={`text-xs font-bold px-2 py-0.5 rounded-full text-white ${getScoreColor(component.score, component.maxScore)}`}>
+                                  {component.score}/{component.maxScore}
                                 </span>
-                                {/* Tooltip */}
-                                <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs rounded-xl shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50 pointer-events-none">
-                                  <div className="font-bold mb-1">Evidence:</div>
-                                  {e}
-                                  <div className="absolute top-full left-4 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-white"></div>
-                                </div>
                               </div>
-                            ))}
+                            </div>
+                            <div className="relative group/desc flex-grow">
+                              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-left">
+                                {component.description}
+                              </p>
+                            </div>
+
+                            {component.evidence.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-auto">
+                                {component.evidence.slice(0, 2).map((e, i) => (
+                                  <div key={i} className="group/tooltip relative inline-flex">
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 dark:bg-dark-700 text-xs text-gray-600 dark:text-gray-400 cursor-help hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors">
+                                      <Check className="w-3 h-3 text-green-500" />
+                                      <span className="whitespace-normal">{e}</span>
+                                    </span>
+                                    {/* Tooltip */}
+                                    <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs rounded-xl shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50 pointer-events-none">
+                                      <div className="font-bold mb-1">Evidence:</div>
+                                      {e}
+                                      <div className="absolute top-full left-4 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-white"></div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                        )}
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* --- ROW 4: Framework Assessment (Collapsible) --- */}
-            {analysis.paper.documentType && analysis.paper.field && (
-              <div id="framework" className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-dark-700 shadow-sm overflow-hidden">
-                <button
-                  onClick={() => toggleSection('framework')}
-                  className="w-full px-6 py-4 border-b border-gray-100 dark:border-dark-700 bg-gray-50 dark:bg-dark-800/50 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <Scale className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                    <h3 className="font-bold text-gray-900 dark:text-white">Framework Assessment</h3>
-                  </div>
-                  {expandedSection === 'framework' || expandedSection === 'all' ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
-                </button>
+                {/* --- ROW 4: Framework Assessment (Collapsible) --- */}
+                {analysis.paper.documentType && analysis.paper.field && (
+                  <div id="framework" className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-dark-700 shadow-sm overflow-hidden">
+                    <button
+                      onClick={() => toggleSection('framework')}
+                      className="w-full px-6 py-4 border-b border-gray-100 dark:border-dark-700 bg-gray-50 dark:bg-dark-800/50 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Scale className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                        <h3 className="font-bold text-gray-900 dark:text-white">Framework Assessment</h3>
+                      </div>
+                      {expandedSection === 'framework' || expandedSection === 'all' ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+                    </button>
 
-                {(expandedSection === 'framework' || expandedSection === 'all') && (
-                  <div className="p-6 animate-fade-in">
-                    <FrameworkAssessmentView
-                      framework={getFrameworkGuidelines(analysis.paper.documentType as any, analysis.paper.field as any)}
-                      collapsed={false}
-                    />
+                    {(expandedSection === 'framework' || expandedSection === 'all') && (
+                      <div className="p-6 animate-fade-in">
+                        <FrameworkAssessmentView
+                          framework={getFrameworkGuidelines(analysis.paper.documentType as any, analysis.paper.field as any)}
+                          collapsed={false}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

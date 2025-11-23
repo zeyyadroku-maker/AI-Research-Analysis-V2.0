@@ -64,7 +64,7 @@ export default function FileUploadTab({
       const formData = new FormData()
       formData.append('file', file)
 
-      // Simulate progress
+      // Simulate progress for upload phase
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => Math.min(prev + Math.random() * 30, 90))
       }, 200)
@@ -75,25 +75,183 @@ export default function FileUploadTab({
       })
 
       clearInterval(progressInterval)
+      setUploadProgress(100)
 
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Upload failed')
       }
 
-      const result: AnalysisResult = await response.json()
-      setUploadProgress(100)
+      if (!response.body) {
+        throw new Error('No response body')
+      }
 
-      // Reset form
-      setTimeout(() => {
-        setFileName('')
-        setIsUploading(false)
-        setUploadProgress(0)
-        if (fileInputRef.current) {
-          fileInputRef.current.value = ''
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let metadata: any = null
+      let fullJsonText = ''
+
+      // Create initial empty result
+      const initialPaper: Paper = {
+        id: `file-${Date.now()}`,
+        title: file.name.replace(/\.[^/.]+$/, ''),
+        authors: ['Uploaded Document'],
+        abstract: 'Analysis in progress...',
+        year: new Date().getFullYear(),
+        documentType: 'unknown',
+        field: 'interdisciplinary',
+      }
+
+      // We need to import createEmptyAnalysisResult or duplicate it.
+      // Since it's not exported from SearchPage, we'll implement a local version or import if we refactor.
+      // For now, let's duplicate the minimal structure needed for the view to render loading state.
+      let currentAnalysis: AnalysisResult = {
+        paper: initialPaper,
+        classification: { documentType: 'unknown', field: 'unknown', confidence: 'MEDIUM' },
+        credibility: {
+          totalScore: 0,
+          maxTotalScore: 10,
+          rating: 'Invalid',
+          overallConfidence: 'UNCERTAIN',
+          methodologicalRigor: { score: 0, maxScore: 2.5, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: '...' },
+          dataTransparency: { score: 0, maxScore: 2.0, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: '...' },
+          sourceQuality: { score: 0, maxScore: 1.5, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: '...' },
+          authorCredibility: { score: 0, maxScore: 1.5, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: '...' },
+          statisticalValidity: { score: 0, maxScore: 1.5, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: '...' },
+          logicalConsistency: { score: 0, maxScore: 1.0, description: 'Analyzing...', evidence: [], confidence: 'UNCERTAIN', reasoning: '...' },
+        },
+        bias: { overallLevel: 'Low', overallConfidence: 'UNCERTAIN', justification: 'Analyzing...', biases: [] },
+        keyFindings: {
+          fundamentals: { title: initialPaper.title, authors: initialPaper.authors, journal: 'Unknown', publicationDate: 'Unknown', articleType: 'Unknown' },
+          researchQuestion: 'Analyzing...',
+          hypothesis: '...',
+          methodology: { studyDesign: '...', sampleSize: '...', population: '...', setting: '...', samplingMethod: '...', outcomesMeasures: [], statisticalMethods: [], studyDuration: '...' },
+          findings: { primaryFindings: [], secondaryFindings: [], effectSizes: [], clinicalSignificance: '...', unexpectedFindings: [] },
+          conclusions: { primaryConclusion: '...', supportedByData: true, practicalImplications: [], futureResearchNeeded: [], recommendations: [], generalizability: '...' },
+          limitations: { severity: 'Minor', authorAcknowledged: [], methodologicalIdentified: [] }
+        },
+        perspective: { paradigm: 'Positivist', theoreticalFramework: '...', epistemologicalStance: '...', disciplinaryPerspective: '...', assumptions: { stated: [], unstated: [] }, context: { geographic: '...', temporal: '...', institutional: '...' } },
+        redFlags: [],
+        aiLimitations: { cannotAssess: [], requiresExpertReview: [], uncertaintyAreas: [], requiredExpertise: [], missingInformation: [], confidenceNote: 'Analysis in progress...' },
+        humanReview: { priority: 'STANDARD', reason: 'Analysis in progress', suggestedExperts: [] },
+        limitations: { unverifiableClaims: [], dataLimitations: [], uncertainties: [], aiConfidenceNote: 'Analysis in progress...' },
+        timestamp: new Date().toISOString()
+      }
+
+      // Pass initial state to parent to open modal
+      onAnalysisComplete?.(currentAnalysis)
+
+      // Reset form UI immediately so user sees the modal
+      setFileName('')
+      setIsUploading(false)
+      setUploadProgress(0)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        buffer += chunk
+
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          if (!line.trim()) continue
+
+          if (!metadata && line.startsWith('{"type":"metadata"')) {
+            try {
+              const parsed = JSON.parse(line)
+              if (parsed.type === 'metadata') {
+                metadata = parsed.data
+                // Update classification
+                currentAnalysis = {
+                  ...currentAnalysis,
+                  paper: { ...currentAnalysis.paper, documentType: metadata.documentType, field: metadata.field },
+                  classification: { ...currentAnalysis.classification, documentType: metadata.documentType, field: metadata.field }
+                }
+                onAnalysisComplete?.(currentAnalysis)
+              }
+            } catch (e) { console.error('Error parsing metadata:', e) }
+            continue
+          }
+
+          fullJsonText += line
+
+          // Progressive updates (simplified regex for key sections)
+          try {
+            // Try to extract complete sections using regex
+            // Credibility
+            const credibilityMatch = fullJsonText.match(/"credibility"\s*:\s*(\{[\s\S]*?\})\s*(?:,"bias"|})/)
+            if (credibilityMatch && metadata?.framework) {
+              try {
+                const credibilityData = JSON.parse(credibilityMatch[1])
+                // Calculate scores
+                const maxWeight = (
+                  metadata.framework.weights.methodologicalRigor +
+                  metadata.framework.weights.dataTransparency +
+                  metadata.framework.weights.sourceQuality +
+                  metadata.framework.weights.authorCredibility +
+                  metadata.framework.weights.statisticalValidity +
+                  metadata.framework.weights.logicalConsistency
+                )
+                // We need to import processCredibilityScore or duplicate logic. 
+                // Assuming we can import it as it is used in SearchPage
+                const { processCredibilityScore } = await import('@/app/lib/utils/analysisUtils')
+                const processedCredibility = processCredibilityScore(credibilityData, maxWeight)
+                currentAnalysis = { ...currentAnalysis, credibility: processedCredibility }
+                onAnalysisComplete?.(currentAnalysis)
+              } catch (e) { /* Incomplete JSON */ }
+            }
+
+            // Bias
+            const biasMatch = fullJsonText.match(/"bias"\s*:\s*(\{[\s\S]*?\})\s*(?:,"keyFindings"|})/)
+            if (biasMatch) {
+              try {
+                const biasData = JSON.parse(biasMatch[1])
+                currentAnalysis = { ...currentAnalysis, bias: biasData }
+                onAnalysisComplete?.(currentAnalysis)
+              } catch (e) { }
+            }
+          } catch (e) { }
         }
-        onAnalysisComplete?.(result)
-      }, 500)
+      }
+
+      // Final Parse
+      try {
+        const jsonMatch = fullJsonText.match(/\{[\s\S]*\}/)
+        if (jsonMatch) {
+          const finalJson = JSON.parse(jsonMatch[0])
+          if (metadata?.framework) {
+            const maxWeight = (
+              metadata.framework.weights.methodologicalRigor +
+              metadata.framework.weights.dataTransparency +
+              metadata.framework.weights.sourceQuality +
+              metadata.framework.weights.authorCredibility +
+              metadata.framework.weights.statisticalValidity +
+              metadata.framework.weights.logicalConsistency
+            )
+            const { processCredibilityScore } = await import('@/app/lib/utils/analysisUtils')
+            if (finalJson.credibility) {
+              finalJson.credibility = processCredibilityScore(finalJson.credibility, maxWeight)
+            }
+          }
+
+          const finalAnalysis = {
+            ...currentAnalysis,
+            ...finalJson,
+            timestamp: new Date().toISOString()
+          }
+          onAnalysisComplete?.(finalAnalysis)
+        }
+      } catch (e) {
+        console.error('Final JSON parse error:', e)
+      }
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred during upload'
       setError(errorMessage)
@@ -198,8 +356,8 @@ export default function FileUploadTab({
             setError(null)
           }}
           className={`px-4 py-3 font-medium border-b-2 transition-all duration-200 ${activeTab === 'upload'
-              ? 'border-primary-600 text-primary-600'
-              : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+            ? 'border-primary-600 text-primary-600'
+            : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
             }`}
         >
           Upload Document
@@ -210,8 +368,8 @@ export default function FileUploadTab({
             setError(null)
           }}
           className={`px-4 py-3 font-medium border-b-2 transition-all duration-200 ${activeTab === 'text'
-              ? 'border-primary-600 text-primary-600'
-              : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
+            ? 'border-primary-600 text-primary-600'
+            : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
             }`}
         >
           Analyze Text

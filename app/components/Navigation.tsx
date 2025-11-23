@@ -37,7 +37,7 @@ export default function Navigation({ onLogoClick }: NavigationProps) {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2 flex justify-between items-center">
         {/* Logo - Larger and more prominent */}
         <button onClick={handleLogoClick} className="flex items-center hover:opacity-80 transition bg-none border-none p-0 cursor-pointer flex-shrink-0">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 transition-all duration-100 active:scale-95 flex items-center justify-center">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 transition-all duration-100 active:scale-95 flex items-center justify-center">
             <Image
               src={theme === 'light' ? '/lightmode.png' : '/darkmode.png'}
               alt="Logo"
