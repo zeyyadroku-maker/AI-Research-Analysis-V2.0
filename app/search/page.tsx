@@ -96,12 +96,11 @@ const createEmptyAnalysisResult = (paper: Paper, metadata?: any): AnalysisResult
     redFlags: [],
     aiLimitations: {
       cannotAssess: [],
-      uncertainAreas: [],
+      uncertaintyAreas: [],
       requiresExpertReview: [],
       requiredExpertise: [],
       missingInformation: [],
       confidenceNote: 'Analysis in progress...',
-      uncertaintyAreas: []
     },
     humanReview: {
       priority: 'STANDARD',
