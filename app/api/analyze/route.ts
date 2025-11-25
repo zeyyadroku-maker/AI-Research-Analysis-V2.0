@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Paper } from '@/app/types'
 import { fetchDocumentSafe } from '@/app/lib/documentFetcher'
 import { performUnifiedAnalysis } from '@/app/lib/analysis/unifiedController'
-import { getFrameworkGuidelines, DocumentType, AcademicField, classifyDocumentType, classifyAcademicField } from '@/app/lib/adaptiveFramework'
+import { getFrameworkGuidelines, classifyDocumentType, classifyAcademicField } from '@/app/lib/adaptiveFramework'
 
 export async function POST(request: NextRequest) {
   try {
