@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/app/lib/supabase'
 import { User } from '@supabase/supabase-js'
 import { LogIn, LogOut, UserPlus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function AuthButton() {
+    const router = useRouter()
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
 
@@ -27,18 +29,8 @@ export default function AuthButton() {
         return () => subscription.unsubscribe()
     }, [])
 
-    const handleLogin = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'github',
-            options: {
-                redirectTo: `${window.location.origin}/auth/callback`,
-            },
-        })
-
-        if (error) {
-            console.error('Error logging in:', error)
-            alert('Error logging in: ' + error.message)
-        }
+    const handleLogin = () => {
+        router.push('/login')
     }
 
     const handleLogout = async () => {

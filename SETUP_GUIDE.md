@@ -13,7 +13,8 @@ Follow these steps to connect your application to Supabase for server-side data 
 2.  Find the **Project URL** and **anon public** key.
 3.  Copy these values.
 
-## 3. Enable Authentication Provider
+## 3. Enable Authentication Providers
+### GitHub
 1.  In your Supabase dashboard, go to **Authentication** -> **Providers**.
 2.  Find **GitHub** and toggle it to **Enabled**.
 3.  You will need a GitHub OAuth App. Go to [GitHub Developer Settings](https://github.com/settings/developers).
@@ -21,6 +22,19 @@ Follow these steps to connect your application to Supabase for server-side data 
     -   **Homepage URL**: `http://localhost:3001` (or your production URL)
     -   **Authorization callback URL**: `https://<your-project-ref>.supabase.co/auth/v1/callback` (Find this in Supabase under Auth -> Providers -> GitHub)
 5.  Copy the **Client ID** and **Client Secret** from GitHub to Supabase and click **Save**.
+
+### Google
+1.  Go to **Authentication** -> **Providers** -> **Google** and toggle it to **Enabled**.
+2.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
+3.  Create a new project and configure the **OAuth consent screen**.
+4.  Go to **Credentials** -> **Create Credentials** -> **OAuth client ID**.
+5.  Select **Web application**.
+6.  Add `https://<your-project-ref>.supabase.co/auth/v1/callback` to **Authorized redirect URIs**.
+7.  Copy the **Client ID** and **Client Secret** to Supabase and click **Save**.
+
+### Email
+1.  Go to **Authentication** -> **Providers** -> **Email** and ensure it is **Enabled**.
+2.  (Optional) Configure SMTP settings if you want to send custom emails, otherwise Supabase handles it (with limits).
 
 ## 3. Configure Environment Variables
 1.  Open your `.env.local` file (or create it if it doesn't exist).
