@@ -13,13 +13,18 @@ export default function BookmarksPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    setBookmarks(getBookmarks())
-    setIsLoading(false)
+    const fetchBookmarks = async () => {
+      const data = await getBookmarks()
+      setBookmarks(data)
+      setIsLoading(false)
+    }
+    fetchBookmarks()
   }, [])
 
-  const handleRemoveBookmark = (id: string) => {
-    removeBookmark(id)
-    setBookmarks(getBookmarks())
+  const handleRemoveBookmark = async (id: string) => {
+    await removeBookmark(id)
+    const data = await getBookmarks()
+    setBookmarks(data)
   }
 
   const handleViewAnalysis = (analysis: AnalysisResult) => {

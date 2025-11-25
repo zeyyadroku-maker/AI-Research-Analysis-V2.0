@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Paper } from '@/app/types'
 import { fetchDocumentSafe } from '@/app/lib/documentFetcher'
 import { performUnifiedAnalysis } from '@/app/lib/analysis/unifiedController'
+import { getFrameworkGuidelines, DocumentType, AcademicField, classifyDocumentType, classifyAcademicField } from '@/app/lib/adaptiveFramework'
 
 export async function POST(request: NextRequest) {
   try {
@@ -49,6 +50,62 @@ export async function POST(request: NextRequest) {
       } else {
         console.log('Could not fetch full document, using abstract')
       }
+    }
+
+    // Check for cached analysis in Supabase
+    // We use the anon client here which is fine since our RLS allows public read
+    const { supabase } = await import('@/app/lib/supabase')
+
+    // Check if any bookmark exists for this paper ID
+    // We use limit(1) to get just one result if multiple people bookmarked it
+    const { data: cachedBookmark } = await supabase
+      .from('bookmarks')
+      .select('analysis_data')
+      .eq('paper_id', paper.id)
+      .limit(1)
+      .single()
+
+    if (cachedBookmark && cachedBookmark.analysis_data) {
+      console.log(`[Cache Hit] Found existing analysis for: ${paper.title}`)
+      const cachedAnalysis = cachedBookmark.analysis_data
+
+      // Create a stream that mimics the unified controller output
+      const encoder = new TextEncoder()
+      const stream = new ReadableStream({
+        start(controller) {
+          // 1. Send metadata
+          // IMPORTANT: Re-classify using current logic to ensure consistency
+          // Don't trust the cached classification as it may be from old logic
+          const docType = classifyDocumentType(paper.abstract || '', paper.title)
+          const field = classifyAcademicField(paper.abstract || '', paper.title)
+
+          const framework = getFrameworkGuidelines(docType, field)
+
+          const metadata = {
+            type: 'metadata',
+            data: {
+              documentType: docType,
+              field: field,
+              framework: framework
+            }
+          }
+          controller.enqueue(encoder.encode(JSON.stringify(metadata) + '\n'))
+
+          // 2. Send the full analysis JSON
+          // We send it as a single chunk since it's already complete
+          // IMPORTANT: Append \n so the client side buffer logic (split by newline) processes it immediately
+          controller.enqueue(encoder.encode(JSON.stringify(cachedAnalysis) + '\n'))
+
+          controller.close()
+        }
+      })
+
+      return new NextResponse(stream, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Transfer-Encoding': 'chunked',
+        },
+      })
     }
 
     // Use unified controller

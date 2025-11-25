@@ -32,15 +32,19 @@ export default function DetailedAnalysisView({ analysis, onClose }: DetailedAnal
   }, [onClose])
 
   useEffect(() => {
-    setIsBookmarkedState(isBookmarked(analysis.paper.id))
+    const checkBookmark = async () => {
+      const bookmarked = await isBookmarked(analysis.paper.id)
+      setIsBookmarkedState(bookmarked)
+    }
+    checkBookmark()
   }, [analysis.paper.id])
 
-  const handleBookmark = () => {
+  const handleBookmark = async () => {
     if (isBookmarkedState) {
-      removeBookmark(analysis.paper.id)
+      await removeBookmark(analysis.paper.id)
       setIsBookmarkedState(false)
     } else {
-      saveBookmark(analysis, '')
+      await saveBookmark(analysis, '')
       setIsBookmarkedState(true)
     }
   }
