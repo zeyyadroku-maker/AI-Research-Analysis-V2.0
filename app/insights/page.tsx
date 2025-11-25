@@ -4,40 +4,27 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { BookmarkedPaper, AnalysisResult } from '@/app/types'
 import Navigation from '@/app/components/Navigation'
+import { getBookmarks } from '@/app/lib/bookmarks'
 
 export default function InsightsPage() {
   const [bookmarks, setBookmarks] = useState<BookmarkedPaper[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Load bookmarks from localStorage
-  const loadBookmarks = () => {
+  // Load bookmarks from Supabase
+  const loadBookmarks = async () => {
     try {
-      const stored = localStorage.getItem('research_analysis_bookmarks')
-      if (stored) {
-        setBookmarks(JSON.parse(stored))
-      } else {
-        setBookmarks([])
-      }
+      const data = await getBookmarks()
+      setBookmarks(data)
     } catch (error) {
       console.error('Error loading bookmarks:', error)
       setBookmarks([])
+    } finally {
+      setLoading(false)
     }
   }
 
   useEffect(() => {
-    // Initial load
     loadBookmarks()
-    setLoading(false)
-
-    // Listen for storage changes (from other tabs or same tab)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'research_analysis_bookmarks') {
-        loadBookmarks()
-      }
-    }
-
-    window.addEventListener('storage', handleStorageChange)
-    return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
   const getMaxWeight = (analysis: AnalysisResult) => {

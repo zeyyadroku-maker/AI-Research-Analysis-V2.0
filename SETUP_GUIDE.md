@@ -13,6 +13,15 @@ Follow these steps to connect your application to Supabase for server-side data 
 2.  Find the **Project URL** and **anon public** key.
 3.  Copy these values.
 
+## 3. Enable Authentication Provider
+1.  In your Supabase dashboard, go to **Authentication** -> **Providers**.
+2.  Find **GitHub** and toggle it to **Enabled**.
+3.  You will need a GitHub OAuth App. Go to [GitHub Developer Settings](https://github.com/settings/developers).
+4.  Create a New OAuth App:
+    -   **Homepage URL**: `http://localhost:3001` (or your production URL)
+    -   **Authorization callback URL**: `https://<your-project-ref>.supabase.co/auth/v1/callback` (Find this in Supabase under Auth -> Providers -> GitHub)
+5.  Copy the **Client ID** and **Client Secret** from GitHub to Supabase and click **Save**.
+
 ## 3. Configure Environment Variables
 1.  Open your `.env.local` file (or create it if it doesn't exist).
 2.  Add the following lines, replacing the placeholders with your actual values:
@@ -36,3 +45,12 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 ## Troubleshooting
 - **Bookmarks not saving?** Check your browser console for errors. Ensure your environment variables are correct and you restarted the server.
 - **RLS Errors?** If you see "permission denied", check the policies in the SQL Editor. The provided schema enables public access for simplicity, but you can adjust this later.
+
+## 6. Update Schema for Authentication (Optional but Recommended)
+If you want to support user authentication, run this additional SQL command in the SQL Editor:
+
+```sql
+alter table bookmarks add column if not exists user_id uuid references auth.users(id);
+```
+
+This links bookmarks to specific users.

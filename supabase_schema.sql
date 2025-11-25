@@ -5,13 +5,15 @@ create table if not exists bookmarks (
   paper_id text not null,
   analysis_data jsonb not null,
   notes text,
-  -- In a real app with Auth, you would link this to auth.users
-  -- user_id uuid default auth.uid()
+  -- Link to auth.users
+  user_id uuid references auth.users(id),
   
-  -- For this demo without Auth, we'll just store everything publicly
-  -- or you could generate a random client ID and store it in localStorage to link to rows
+  -- For anonymous users
   client_id text
 );
+
+-- Run this if you already created the table:
+-- alter table bookmarks add column if not exists user_id uuid references auth.users(id);
 
 -- Set up Row Level Security (RLS)
 alter table bookmarks enable row level security;
