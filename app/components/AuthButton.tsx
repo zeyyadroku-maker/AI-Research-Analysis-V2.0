@@ -10,6 +10,7 @@ export default function AuthButton() {
     const router = useRouter()
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
+    const [isOpen, setIsOpen] = useState(false)
 
     useEffect(() => {
         // Check active session
@@ -40,8 +41,6 @@ export default function AuthButton() {
     if (loading) {
         return <div className="h-10 w-24 bg-gray-200 dark:bg-dark-700 rounded-xl animate-pulse"></div>
     }
-
-    const [isOpen, setIsOpen] = useState(false)
 
     if (user) {
         return (
