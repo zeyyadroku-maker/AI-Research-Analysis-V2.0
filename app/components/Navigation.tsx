@@ -36,85 +36,90 @@ export default function Navigation({ onLogoClick }: NavigationProps) {
   return (
     <nav className="sticky top-0 z-40 bg-white/70 dark:bg-dark-800/70 backdrop-blur-md border-b border-gray-200 dark:border-dark-700 transition-colors">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2 flex justify-between items-center">
-        {/* Logo - Larger and more prominent */}
-        <button onClick={handleLogoClick} className="flex items-center hover:opacity-80 transition bg-none border-none p-0 cursor-pointer flex-shrink-0">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 transition-all duration-100 active:scale-95 flex items-center justify-center">
-            <Image
-              src={theme === 'light' ? '/lightmode.png' : '/darkmode.png'}
-              alt="Logo"
-              width={160}
-              height={160}
-              priority
-              className="w-full h-full object-contain"
-            />
+        <div className="flex items-center gap-8">
+          {/* Logo - Larger and more prominent */}
+          <button onClick={handleLogoClick} className="flex items-center hover:opacity-80 transition bg-none border-none p-0 cursor-pointer flex-shrink-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 transition-all duration-100 active:scale-95 flex items-center justify-center">
+              <Image
+                src={theme === 'light' ? '/lightmode.png' : '/darkmode.png'}
+                alt="Logo"
+                width={160}
+                height={160}
+                priority
+                className="w-full h-full object-contain"
+              />
+            </div>
+          </button>
+
+          {/* Desktop Navigation - Hidden on mobile */}
+          <div className="hidden md:flex items-center gap-2">
+            <Link
+              href="/"
+              className={`px-4 py-2 rounded-xl transition-all duration-100 active:scale-95 flex items-center gap-2 ${pathname === '/'
+                ? 'bg-primary-600 text-white'
+                : 'bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-dark-600'
+                }`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Home
+            </Link>
+            <Link
+              href="/search"
+              className={`px-4 py-2 rounded-xl transition-all duration-100 active:scale-95 flex items-center gap-2 ${pathname === '/search'
+                ? 'bg-primary-600 text-white'
+                : 'bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-dark-600'
+                }`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Search
+            </Link>
+            <Link
+              href="/insights"
+              className={`px-4 py-2 rounded-xl transition-all duration-100 active:scale-95 flex items-center gap-2 ${pathname === '/insights'
+                ? 'bg-primary-600 text-white'
+                : 'bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-dark-600'
+                }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z" />
+                <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+              </svg>
+              Insights
+            </Link>
+            <Link
+              href="/bookmarks"
+              className={`px-4 py-2 rounded-xl transition-all duration-100 active:scale-95 flex items-center gap-2 ${pathname === '/bookmarks'
+                ? 'bg-primary-600 text-white'
+                : 'bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-dark-600'
+                }`}
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+              </svg>
+              Bookmarks
+            </Link>
+
+            <Link
+              href="/about"
+              className={`px-4 py-2 rounded-xl transition-all duration-100 active:scale-95 flex items-center gap-2 ${pathname === '/about'
+                ? 'bg-primary-600 text-white'
+                : 'bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-dark-600'
+                }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              About
+            </Link>
           </div>
-        </button>
+        </div>
 
-        {/* Desktop Navigation - Hidden on mobile */}
+        {/* Right Side - Auth and Theme */}
         <div className="hidden md:flex items-center gap-4">
-          <Link
-            href="/"
-            className={`px-4 py-2 rounded-xl transition-all duration-100 active:scale-95 flex items-center gap-2 ${pathname === '/'
-              ? 'bg-primary-600 text-white'
-              : 'bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-dark-600'
-              }`}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            Home
-          </Link>
-          <Link
-            href="/search"
-            className={`px-4 py-2 rounded-xl transition-all duration-100 active:scale-95 flex items-center gap-2 ${pathname === '/search'
-              ? 'bg-primary-600 text-white'
-              : 'bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-dark-600'
-              }`}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            Search
-          </Link>
-          <Link
-            href="/insights"
-            className={`px-4 py-2 rounded-xl transition-all duration-100 active:scale-95 flex items-center gap-2 ${pathname === '/insights'
-              ? 'bg-primary-600 text-white'
-              : 'bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-dark-600'
-              }`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z" />
-              <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-            </svg>
-            Insights
-          </Link>
-          <Link
-            href="/bookmarks"
-            className={`px-4 py-2 rounded-xl transition-all duration-100 active:scale-95 flex items-center gap-2 ${pathname === '/bookmarks'
-              ? 'bg-primary-600 text-white'
-              : 'bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-dark-600'
-              }`}
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
-            </svg>
-            Bookmarks
-          </Link>
-
-          <Link
-            href="/about"
-            className={`px-4 py-2 rounded-xl transition-all duration-100 active:scale-95 flex items-center gap-2 ${pathname === '/about'
-              ? 'bg-primary-600 text-white'
-              : 'bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-dark-600'
-              }`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            About
-          </Link>
-
           <AuthButton />
 
           <button
