@@ -7,10 +7,7 @@ console.log('[Supabase Config] URL:', supabaseUrl ? 'Loaded' : 'Missing')
 console.log('[Supabase Config] Key:', supabaseAnonKey ? 'Loaded' : 'Missing')
 
 if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('CRITICAL: Supabase environment variables are missing. Check .env.local')
+    throw new Error('Supabase environment variables are missing. Please check your .env.local file or Vercel project settings.')
 }
 
-export const supabase = createClient(
-    supabaseUrl || 'https://placeholder.supabase.co',
-    supabaseAnonKey || 'placeholder'
-)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)

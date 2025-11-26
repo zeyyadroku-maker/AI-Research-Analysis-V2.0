@@ -93,6 +93,9 @@ export default function LoginPage() {
                     <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         {isSignUp ? 'Start analyzing papers in seconds' : 'Sign in to access your bookmarks'}
                     </p>
+                    <div className="mt-2 text-xs text-gray-400">
+                        Status: {process.env.NEXT_PUBLIC_SUPABASE_URL ? 'System Online' : 'Configuration Error'}
+                    </div>
                 </div>
 
                 <div className="mt-8 space-y-6 bg-white dark:bg-dark-800 py-8 px-4 shadow-xl rounded-2xl sm:px-10 border border-gray-100 dark:border-dark-700">
