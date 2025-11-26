@@ -16,6 +16,14 @@ export default function LoginPage() {
     const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'error'>('checking')
 
     useEffect(() => {
+        // Check for error messages in URL
+        const params = new URLSearchParams(window.location.search)
+        const error = params.get('error')
+        const errorMsg = params.get('message')
+        if (error && errorMsg) {
+            setMessage({ type: 'error', text: decodeURIComponent(errorMsg) })
+        }
+
         const checkConnection = async () => {
             try {
                 // Try to reach Supabase
@@ -34,7 +42,7 @@ export default function LoginPage() {
             }
         }
         checkConnection()
-    }, [])
+    }, [router])
 
     const handleOAuthLogin = async (provider: 'github' | 'google') => {
         setIsLoading(true)
