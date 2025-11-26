@@ -19,8 +19,14 @@ export default function LoginPage() {
         const checkConnection = async () => {
             try {
                 // Try to reach Supabase
-                const { error } = await supabase.auth.getSession()
+                const { data: { session }, error } = await supabase.auth.getSession()
                 if (error) throw error
+
+                if (session) {
+                    router.push('/')
+                    return
+                }
+
                 setConnectionStatus('connected')
             } catch (e) {
                 console.error('Connection check failed:', e)
