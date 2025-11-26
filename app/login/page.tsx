@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/app/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { Github, Mail, ArrowRight, Loader2 } from 'lucide-react'
@@ -13,6 +13,22 @@ export default function LoginPage() {
     const [password, setPassword] = useState('')
     const [isSignUp, setIsSignUp] = useState(false)
     const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
+    const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'error'>('checking')
+
+    useEffect(() => {
+        const checkConnection = async () => {
+            try {
+                // Try to reach Supabase
+                const { error } = await supabase.auth.getSession()
+                if (error) throw error
+                setConnectionStatus('connected')
+            } catch (e) {
+                console.error('Connection check failed:', e)
+                setConnectionStatus('error')
+            }
+        }
+        checkConnection()
+    }, [])
 
     const handleOAuthLogin = async (provider: 'github' | 'google') => {
         setIsLoading(true)
@@ -93,8 +109,14 @@ export default function LoginPage() {
                     <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         {isSignUp ? 'Start analyzing papers in seconds' : 'Sign in to access your bookmarks'}
                     </p>
-                    <div className="mt-2 text-xs text-gray-400">
-                        Status: {process.env.NEXT_PUBLIC_SUPABASE_URL ? 'System Online' : 'Configuration Error'}
+                    <div className={`mt-2 text-xs ${connectionStatus === 'connected' ? 'text-green-500' :
+                        connectionStatus === 'error' ? 'text-red-500' : 'text-gray-400'
+                        }`}>
+                        Status: {
+                            connectionStatus === 'checking' ? 'Checking connection...' :
+                                connectionStatus === 'connected' ? 'System Online (Connected)' :
+                                    'Connection Failed - Check URL'
+                        }
                     </div>
                 </div>
 

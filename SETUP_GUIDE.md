@@ -36,6 +36,12 @@ Follow these steps to connect your application to Supabase for server-side data 
 1.  Go to **Authentication** -> **Providers** -> **Email** and ensure it is **Enabled**.
 2.  (Optional) Configure SMTP settings if you want to send custom emails, otherwise Supabase handles it (with limits).
 
+### Important: Redirect URLs
+1.  In Supabase, go to **Authentication** -> **URL Configuration**.
+2.  Add your **Production Vercel URL** (e.g., `https://your-app.vercel.app/auth/callback`) to the **Redirect URLs** list.
+3.  Also add `http://localhost:3000/auth/callback` for local development.
+4.  **Click Save**. Without this, redirects will fail or hang.
+
 ## 3. Configure Environment Variables
 1.  Open your `.env.local` file (or create it if it doesn't exist).
 2.  Add the following lines, replacing the placeholders with your actual values:
