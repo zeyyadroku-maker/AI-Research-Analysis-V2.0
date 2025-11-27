@@ -5,6 +5,7 @@ import { supabase } from '@/app/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { Github, Mail, ArrowRight, Loader2 } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function LoginPage() {
     const router = useRouter()
@@ -103,20 +104,22 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-dark-900 px-4 py-12 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
                 <div className="text-center">
-                    <div className="mx-auto h-24 w-24 relative mb-4">
+                    <Link href="/" className="mx-auto h-32 w-32 relative mb-6 block hover:opacity-90 transition-opacity">
                         <Image
                             src="/lightmode.png"
                             alt="Logo"
                             fill
                             className="object-contain dark:hidden"
+                            priority
                         />
                         <Image
                             src="/darkmode.png"
                             alt="Logo"
                             fill
                             className="object-contain hidden dark:block"
+                            priority
                         />
-                    </div>
+                    </Link>
                     <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
                         {isSignUp ? 'Create an account' : 'Welcome back'}
                     </h2>

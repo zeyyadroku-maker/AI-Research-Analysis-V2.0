@@ -29,7 +29,8 @@ export default function SettingsPage() {
 
     const handleLogout = async () => {
         await supabase.auth.signOut()
-        router.push('/login')
+        router.push('/')
+        router.refresh()
     }
 
     if (loading) {
@@ -45,8 +46,8 @@ export default function SettingsPage() {
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
                 {/* Header */}
                 <div className="mb-8">
-                    <Link 
-                        href="/" 
+                    <Link
+                        href="/"
                         className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors mb-6 group"
                     >
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -84,8 +85,8 @@ export default function SettingsPage() {
                                     </label>
                                     <div className="flex items-center gap-3 text-gray-900 dark:text-white font-medium p-3 bg-gray-50 dark:bg-dark-700/50 rounded-xl border border-gray-100 dark:border-dark-600">
                                         <Shield className="w-5 h-5 text-gray-400" />
-                                        {user?.app_metadata?.provider === 'github' ? 'GitHub Account' : 
-                                         user?.app_metadata?.provider === 'google' ? 'Google Account' : 'Email Account'}
+                                        {user?.app_metadata?.provider === 'github' ? 'GitHub Account' :
+                                            user?.app_metadata?.provider === 'google' ? 'Google Account' : 'Email Account'}
                                     </div>
                                 </div>
                             </div>

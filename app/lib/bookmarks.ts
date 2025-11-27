@@ -36,7 +36,7 @@ export async function getBookmarks(): Promise<BookmarkedPaper[]> {
   const { data, error } = await query
 
   if (error) {
-    console.error('Error fetching bookmarks:', error)
+    console.error('Error fetching bookmarks:', JSON.stringify(error, null, 2))
     return []
   }
 
@@ -98,7 +98,7 @@ export async function saveBookmark(analysis: AnalysisResult, notes?: string): Pr
     .single()
 
   if (error) {
-    console.error('Error saving bookmark:', error)
+    console.error('Error saving bookmark:', JSON.stringify(error, null, 2))
     return null
   }
 
