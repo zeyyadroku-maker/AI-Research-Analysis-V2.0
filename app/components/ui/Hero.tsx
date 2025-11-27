@@ -52,7 +52,7 @@ export default function Hero() {
                         <span className="text-sm font-medium text-primary-700 dark:text-primary-300 tracking-wide uppercase">v2.0 Now Available</span>
                     </div>
 
-                    <h1 className="font-heading text-5xl md:text-7xl font-bold tracking-tight mb-8 text-gray-900 dark:text-white">
+                    <h1 className="font-heading text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-8 text-gray-900 dark:text-white">
                         The AI That <br />
                         <span className="text-gradient-primary">Shows Its Work</span>
                     </h1>

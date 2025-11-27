@@ -170,7 +170,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center sm:p-6 animate-fade-in">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -178,7 +178,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-7xl max-h-[90vh] bg-white dark:bg-dark-900 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-dark-700">
+      <div className="relative w-full max-w-7xl h-[100dvh] sm:h-auto sm:max-h-[90vh] bg-white dark:bg-dark-900 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden border-0 sm:border border-gray-200 dark:border-dark-700">
 
         {/* Header */}
         <div className="flex-shrink-0 px-6 py-4 border-b border-gray-100 dark:border-dark-800 flex justify-between items-center bg-white dark:bg-dark-900 z-20">

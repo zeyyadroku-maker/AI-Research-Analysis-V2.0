@@ -104,14 +104,14 @@ export default function SettingsPage() {
                             </h2>
                         </div>
                         <div className="p-6">
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
                                 <div>
                                     <h3 className="text-base font-medium text-gray-900 dark:text-white">Theme Preference</h3>
                                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Choose how the application looks to you.</p>
                                 </div>
                                 <button
                                     onClick={toggleTheme}
-                                    className="px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-dark-600 transition-all active:scale-95 flex items-center gap-2 font-medium"
+                                    className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-dark-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-dark-600 transition-all active:scale-95 flex items-center justify-center gap-2 font-medium"
                                 >
                                     {theme === 'light' ? (
                                         <>
@@ -140,14 +140,14 @@ export default function SettingsPage() {
                             </h2>
                         </div>
                         <div className="p-6">
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
                                 <div>
                                     <h3 className="text-base font-medium text-gray-900 dark:text-white">Sign Out</h3>
                                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Securely end your current session.</p>
                                 </div>
                                 <button
                                     onClick={handleLogout}
-                                    className="px-4 py-2.5 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all active:scale-95 flex items-center gap-2 font-medium border border-red-100 dark:border-red-900/30"
+                                    className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all active:scale-95 flex items-center justify-center gap-2 font-medium border border-red-100 dark:border-red-900/30"
                                 >
                                     <LogOut className="w-4 h-4" />
                                     Sign Out

@@ -101,8 +101,8 @@ export default function BookmarksPage() {
                   key={bookmark.id}
                   className="bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-700 rounded-lg p-6 hover:border-primary-500 transition-all duration-300 hover:shadow-lg hover:shadow-primary-500/20 group animate-slide-up"
                 >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1 mr-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-4 sm:gap-0">
+                    <div className="flex-1 sm:mr-4 w-full">
                       <button
                         onClick={() => {
                           const url = bookmark.analysis.paper.url ||
@@ -126,12 +126,15 @@ export default function BookmarksPage() {
                     </div>
 
                     {/* Credibility Score Badge */}
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-primary-600 mb-1">
-                        {bookmark.analysis.credibility.totalScore.toFixed(1)}/{maxScore.toFixed(1)}
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        {percentage}% • {rating}
+                    <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto mt-2 sm:mt-0 border-t sm:border-t-0 border-gray-100 dark:border-dark-700 pt-3 sm:pt-0">
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400 sm:hidden">Credibility Score</span>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-primary-600 mb-1">
+                          {bookmark.analysis.credibility.totalScore.toFixed(1)}/{maxScore.toFixed(1)}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {percentage}% • {rating}
+                        </div>
                       </div>
                     </div>
                   </div>
