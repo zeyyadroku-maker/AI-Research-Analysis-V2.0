@@ -3,11 +3,13 @@ import { createBrowserClient } from '@supabase/ssr'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-console.log('[Supabase Config] URL:', supabaseUrl ? 'Loaded' : 'Missing')
-console.log('[Supabase Config] Key:', supabaseAnonKey ? 'Loaded' : 'Missing')
-
 if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Supabase environment variables are missing. Please check your .env.local file or Vercel project settings.')
+    console.error('Supabase environment variables are missing. Please check your .env.local file or Vercel project settings.')
 }
 
-export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)
+// Create a client with empty strings if env vars are missing to prevent immediate crash,
+// but log the error above. This allows the app to render error states instead of blank screen.
+export const supabase = createBrowserClient(
+    supabaseUrl || '',
+    supabaseAnonKey || ''
+)

@@ -31,27 +31,38 @@ export default function DetailedAnalysisView({ analysis, onClose }: DetailedAnal
     return () => window.removeEventListener('keydown', handleEsc)
   }, [onClose])
 
+  // Check bookmark status on mount
   useEffect(() => {
     const checkBookmark = async () => {
-      const bookmarked = await isBookmarked(analysis.paper.id)
-      setIsBookmarkedState(bookmarked)
+      try {
+        const bookmarked = await isBookmarked(analysis.paper.id)
+        setIsBookmarkedState(bookmarked)
+      } catch (error) {
+        console.error('Error checking bookmark status:', error)
+      }
     }
     checkBookmark()
   }, [analysis.paper.id])
 
   const handleBookmark = async () => {
-    if (isBookmarkedState) {
-      await removeBookmark(analysis.paper.id)
-      setIsBookmarkedState(false)
-    } else {
-      await saveBookmark(analysis, '')
-      setIsBookmarkedState(true)
+    try {
+      if (isBookmarkedState) {
+        await removeBookmark(analysis.paper.id)
+        setIsBookmarkedState(false)
+      } else {
+        await saveBookmark(analysis, '')
+        setIsBookmarkedState(true)
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error)
+      // Optionally add user notification here
     }
   }
 
   const handleExportAnalysis = () => {
-    // Generate formatted text report
-    const report = `RESEARCH PAPER ANALYSIS REPORT
+    try {
+      // Generate formatted text report
+      const report = `RESEARCH PAPER ANALYSIS REPORT
 Generated: ${new Date().toLocaleString()}
 ================================================================================
 
@@ -123,25 +134,30 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
 
 ================================================================================`
 
-    // Download as text file
-    const element = document.createElement('a')
-    element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(report)}`)
-    element.setAttribute('download', `${analysis.paper.title.replace(/[^a-z0-9]/gi, '_').substring(0, 50)}_analysis.txt`)
-    element.style.display = 'none'
-    document.body.appendChild(element)
-    element.click()
-    document.body.removeChild(element)
+      // Download as text file
+      const element = document.createElement('a')
+      element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(report)}`)
+      element.setAttribute('download', `${analysis.paper.title.replace(/[^a-z0-9]/gi, '_').substring(0, 50)}_analysis.txt`)
+      element.style.display = 'none'
+      document.body.appendChild(element)
+      element.click()
+      document.body.removeChild(element)
+    } catch (error) {
+      console.error('Error exporting analysis:', error)
+    }
   }
 
+  // Helper to determine score color
   const getScoreColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100
     if (percentage >= 90) return 'bg-green-600' // Exemplary
     if (percentage >= 70) return 'bg-green-500' // Strong
     if (percentage >= 50) return 'bg-yellow-500' // Moderate
-    if (percentage >= 30) return 'bg-yellow-500' // Weak - Changed from orange to yellow per request
+    if (percentage >= 30) return 'bg-yellow-500' // Weak
     return 'bg-red-500' // Poor
   }
 
+  // Helper to determine confidence badge style
   const getConfidenceBadgeColor = (confidence: string) => {
     switch (confidence) {
       case 'HIGH': return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800'

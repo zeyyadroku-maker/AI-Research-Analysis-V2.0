@@ -16,6 +16,11 @@ export const metadata: Metadata = {
     locale: 'en_US',
     siteName: 'Syllogos',
   },
+  icons: {
+    icon: '/lightmode.png',
+    shortcut: '/lightmode.png',
+    apple: '/lightmode.png',
+  },
   twitter: {
     card: 'summary_large_image',
     title: 'Syllogos - The AI That Shows Its Work',
