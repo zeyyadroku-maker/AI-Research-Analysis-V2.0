@@ -17,9 +17,9 @@ export const metadata: Metadata = {
     siteName: 'Syllogos',
   },
   icons: {
-    icon: '/lightmode.png',
-    shortcut: '/lightmode.png',
-    apple: '/lightmode.png',
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
   },
   twitter: {
     card: 'summary_large_image',
