@@ -160,7 +160,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-1">
-              <div className="font-heading font-bold text-2xl mb-6 bg-gradient-to-r from-[#0284c7]/70 via-[#8b5cf6]/70 via-[#ec4899]/70 to-[#14b8a6]/70 bg-clip-text text-transparent">Syllogos</div>
+              <div className="font-heading font-bold text-2xl mb-6 bg-gradient-to-r from-[#0284c7] via-[#8b5cf6] via-[#ec4899] to-[#14b8a6] bg-clip-text text-transparent">Syllogos</div>
               <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                 Transparency in every assessment. Built for researchers, by researchers.
               </p>
