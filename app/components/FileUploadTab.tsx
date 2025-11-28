@@ -1,5 +1,8 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/app/lib/supabase'
+
 import { useState, useRef } from 'react'
 import { Paper, AnalysisResult } from '@/app/types'
 
@@ -16,6 +19,7 @@ export default function FileUploadTab({
   onAnalysisComplete,
   onError,
 }: FileUploadTabProps) {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<TabType>('upload')
   const [isUploading, setIsUploading] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -30,6 +34,13 @@ export default function FileUploadTab({
   const MAX_TEXT_LENGTH = 50000
 
   const handleFileSelect = async (file: File) => {
+    // Check for authentication
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      router.push('/login')
+      return
+    }
+
     setError(null)
 
     // Validate file type
@@ -282,6 +293,13 @@ export default function FileUploadTab({
   }
 
   const analyzeText = async () => {
+    // Check for authentication
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      router.push('/login')
+      return
+    }
+
     if (!textContent.trim()) {
       const err = 'Please enter some text to analyze'
       setError(err)

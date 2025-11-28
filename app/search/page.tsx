@@ -1,5 +1,7 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/app/lib/supabase'
 import { useState } from 'react'
 import SearchBar, { SearchFilters } from '../components/SearchBar'
 import ResultsCard from '../components/ResultsCard'
@@ -259,7 +261,16 @@ export default function SearchPage() {
     await performSearch(lastQuery, page, lastFilters)
   }
 
+  const router = useRouter()
+
   const handleAnalyze = async (paper: Paper) => {
+    // Check for authentication
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      router.push('/login')
+      return
+    }
+
     setIsAnalyzing(true)
     setAnalyzingPaperId(paper.id)
     setError(null)
