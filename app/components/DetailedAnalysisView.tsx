@@ -299,7 +299,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                   <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
-                      <h3 className="text-lg font-bold text-red-900 dark:text-red-100">Critical Issues Detected</h3>
+                      <h3 className="text-lg font-bold text-red-900 dark:text-red-100 truncate">Critical Issues Detected</h3>
                     </div>
                     <div className="space-y-3">
                       {analysis.redFlags.map((flag, idx) => (
@@ -313,8 +313,8 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                               {flag.severity}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">{flag.evidence}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 italic">Recommendation: {flag.recommendation}</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 mb-1 line-clamp-3" title={flag.evidence}>{flag.evidence}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 italic line-clamp-2" title={flag.recommendation}>Recommendation: {flag.recommendation}</p>
                         </div>
                       ))}
                     </div>
@@ -363,7 +363,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                           }`}>
                           {analysis.bias.overallLevel}
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-4" title={analysis.bias.justification}>
                           {analysis.bias.justification}
                         </p>
                       </>
@@ -399,7 +399,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                     <div className="space-y-6">
                       <div>
                         <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Research Question</h4>
-                        <p className="text-lg font-medium text-gray-900 dark:text-white leading-relaxed">
+                        <p className="text-lg font-medium text-gray-900 dark:text-white leading-relaxed line-clamp-4" title={analysis.keyFindings.researchQuestion}>
                           {analysis.keyFindings.researchQuestion}
                         </p>
                       </div>
@@ -413,7 +413,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                         ].map((item, i) => (
                           <div key={i}>
                             <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">{item.label}</h4>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">{item.val}</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate" title={item.val}>{item.val}</p>
                           </div>
                         ))}
                       </div>
@@ -424,7 +424,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                           {analysis.keyFindings.findings.primaryFindings.map((finding, i) => (
                             <li key={i} className="flex gap-3 text-gray-700 dark:text-gray-300">
                               <div className="w-1.5 h-1.5 rounded-full bg-primary-500 mt-2 flex-shrink-0"></div>
-                              <span className="leading-relaxed">{finding}</span>
+                              <span className="leading-relaxed line-clamp-3" title={finding}>{finding}</span>
                             </li>
                           ))}
                         </ul>
@@ -489,7 +489,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                         ].map((item, i) => (
                           <div key={i}>
                             <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase block mb-1">{item.label}</span>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">{item.val}</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate" title={item.val}>{item.val}</p>
                           </div>
                         ))}
                       </div>
@@ -546,8 +546,8 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                                 {component.evidence.slice(0, 2).map((e, i) => (
                                   <div key={i} className="group/tooltip relative inline-flex">
                                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 dark:bg-dark-700 text-xs text-gray-600 dark:text-gray-400 cursor-help hover:bg-gray-200 dark:hover:bg-dark-600 transition-colors">
-                                      <Check className="w-3 h-3 text-green-500" />
-                                      <span className="whitespace-normal">{e}</span>
+                                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                      <span className="truncate max-w-[150px] sm:max-w-[200px] whitespace-nowrap">{e}</span>
                                     </span>
                                     {/* Tooltip */}
                                     <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs rounded-xl shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50 pointer-events-none">

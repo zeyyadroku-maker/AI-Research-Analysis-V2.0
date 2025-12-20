@@ -61,7 +61,7 @@ export default function FrameworkAssessmentView({
               </div>
             </div>
 
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed flex-grow">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed flex-grow line-clamp-4" title={item.desc}>
               {item.desc}
             </p>
 
