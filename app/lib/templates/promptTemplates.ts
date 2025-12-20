@@ -243,7 +243,13 @@ export function getOutputFormatTemplate(context: FrameworkPromptContext): string
   return `
 OUTPUT FORMAT:
 Return ONLY valid JSON with this structure.
-CRITICAL: Adhere to the character limits specified in the comments for each field to ensure UI compatibility.
+
+CRITICAL INSTRUCTIONS FOR TEXT GENERATION:
+1. STRICTLY ADHERE to the maximum character counts specified in the comments (e.g., MAX 150 CHARACTERS).
+2. DO NOT TRUNCATE text or use ellipses ("..."). The generated content MUST be complete grammatical sentences that naturally fit within the limit.
+3. Be concise and direct. Focus on the most important information.
+4. If a thought is too long, rewrite it to be shorter rather than cutting it off.
+5. These limits are for UI compatibility - breaking them will break the user interface.
 
 {
   "classification": {
