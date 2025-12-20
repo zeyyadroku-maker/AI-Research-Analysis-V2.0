@@ -242,7 +242,8 @@ What Makes Research Credible:
 export function getOutputFormatTemplate(context: FrameworkPromptContext): string {
   return `
 OUTPUT FORMAT:
-Return ONLY valid JSON with this structure:
+Return ONLY valid JSON with this structure.
+CRITICAL: Adhere to the character limits specified in the comments for each field to ensure UI compatibility.
 
 {
   "classification": {
@@ -254,8 +255,8 @@ Return ONLY valid JSON with this structure:
     "methodologicalRigor": {
       "score": number,
       "maxScore": ${context.framework.weights.methodologicalRigor},
-      "description": "string",
-      "evidence": ["string"],
+      "description": "string (MAX 150 CHARACTERS)",
+      "evidence": ["string (MAX 100 CHARACTERS EACH)"],
       "confidence": "HIGH" | "MEDIUM" | "LOW" | "UNCERTAIN",
       "reasoning": "string",
       "limitations": ["string"]
@@ -263,8 +264,8 @@ Return ONLY valid JSON with this structure:
     "dataTransparency": {
       "score": number,
       "maxScore": ${context.framework.weights.dataTransparency},
-      "description": "string",
-      "evidence": ["string"],
+      "description": "string (MAX 150 CHARACTERS)",
+      "evidence": ["string (MAX 100 CHARACTERS EACH)"],
       "confidence": "HIGH" | "MEDIUM" | "LOW" | "UNCERTAIN",
       "reasoning": "string",
       "limitations": ["string"]
@@ -272,8 +273,8 @@ Return ONLY valid JSON with this structure:
     "sourceQuality": {
       "score": number,
       "maxScore": ${context.framework.weights.sourceQuality},
-      "description": "string",
-      "evidence": ["string"],
+      "description": "string (MAX 150 CHARACTERS)",
+      "evidence": ["string (MAX 100 CHARACTERS EACH)"],
       "confidence": "HIGH" | "MEDIUM" | "LOW" | "UNCERTAIN",
       "reasoning": "string",
       "limitations": ["string"]
@@ -281,8 +282,8 @@ Return ONLY valid JSON with this structure:
     "authorCredibility": {
       "score": number,
       "maxScore": ${context.framework.weights.authorCredibility},
-      "description": "string",
-      "evidence": ["string"],
+      "description": "string (MAX 150 CHARACTERS)",
+      "evidence": ["string (MAX 100 CHARACTERS EACH)"],
       "confidence": "HIGH" | "MEDIUM" | "LOW" | "UNCERTAIN",
       "reasoning": "string",
       "limitations": ["string"]
@@ -290,8 +291,8 @@ Return ONLY valid JSON with this structure:
     "statisticalValidity": {
       "score": number,
       "maxScore": ${context.framework.weights.statisticalValidity},
-      "description": "string",
-      "evidence": ["string"],
+      "description": "string (MAX 150 CHARACTERS)",
+      "evidence": ["string (MAX 100 CHARACTERS EACH)"],
       "confidence": "HIGH" | "MEDIUM" | "LOW" | "UNCERTAIN",
       "reasoning": "string",
       "limitations": ["string"]
@@ -299,8 +300,8 @@ Return ONLY valid JSON with this structure:
     "logicalConsistency": {
       "score": number,
       "maxScore": ${context.framework.weights.logicalConsistency},
-      "description": "string",
-      "evidence": ["string"],
+      "description": "string (MAX 150 CHARACTERS)",
+      "evidence": ["string (MAX 100 CHARACTERS EACH)"],
       "confidence": "HIGH" | "MEDIUM" | "LOW" | "UNCERTAIN",
       "reasoning": "string",
       "limitations": ["string"]
@@ -313,7 +314,7 @@ Return ONLY valid JSON with this structure:
     "biases": [
       {
         "type": "string",
-        "evidence": "string",
+        "evidence": "string (MAX 120 CHARACTERS)",
         "severity": "Low" | "Medium" | "High",
         "confidence": "HIGH" | "MEDIUM" | "LOW" | "UNCERTAIN",
         "verifiable": boolean,
@@ -323,7 +324,7 @@ Return ONLY valid JSON with this structure:
     ],
     "overallLevel": "Low" | "Medium" | "High",
     "overallConfidence": "HIGH" | "MEDIUM" | "LOW" | "UNCERTAIN",
-    "justification": "string"
+    "justification": "string (MAX 250 CHARACTERS)"
   },
   "keyFindings": {
     "fundamentals": {
@@ -334,14 +335,14 @@ Return ONLY valid JSON with this structure:
       "publicationDate": "string",
       "articleType": "string"
     },
-    "researchQuestion": "string",
-    "hypothesis": "string",
+    "researchQuestion": "string (MAX 200 CHARACTERS)",
+    "hypothesis": "string (MAX 200 CHARACTERS)",
     "methodology": {
-      "studyDesign": "string",
-      "sampleSize": "string",
-      "population": "string",
+      "studyDesign": "string (MAX 50 CHARACTERS)",
+      "sampleSize": "string (MAX 50 CHARACTERS)",
+      "population": "string (MAX 80 CHARACTERS)",
       "samplingMethod": "string",
-      "setting": "string",
+      "setting": "string (MAX 80 CHARACTERS)",
       "intervention": "string",
       "comparisonGroups": "string",
       "outcomesMeasures": ["string"],
@@ -349,19 +350,19 @@ Return ONLY valid JSON with this structure:
       "studyDuration": "string"
     },
     "findings": {
-      "primaryFindings": ["string"],
+      "primaryFindings": ["string (MAX 150 CHARACTERS EACH)"],
       "secondaryFindings": ["string"],
       "effectSizes": ["string"],
       "clinicalSignificance": "string",
       "unexpectedFindings": ["string"]
     },
     "limitations": {
-      "authorAcknowledged": ["string"],
+      "authorAcknowledged": ["string (MAX 100 CHARACTERS EACH)"],
       "methodologicalIdentified": ["string"],
       "severity": "Minor" | "Moderate" | "Major"
     },
     "conclusions": {
-      "primaryConclusion": "string",
+      "primaryConclusion": "string (MAX 300 CHARACTERS)",
       "supportedByData": boolean,
       "practicalImplications": ["string"],
       "futureResearchNeeded": ["string"],
@@ -370,10 +371,10 @@ Return ONLY valid JSON with this structure:
     }
   },
   "perspective": {
-    "theoreticalFramework": "string",
-    "paradigm": "string",
-    "disciplinaryPerspective": "string",
-    "epistemologicalStance": "string",
+    "theoreticalFramework": "string (MAX 100 CHARACTERS)",
+    "paradigm": "string (MAX 50 CHARACTERS)",
+    "disciplinaryPerspective": "string (MAX 100 CHARACTERS)",
+    "epistemologicalStance": "string (MAX 80 CHARACTERS)",
     "assumptions": {
       "stated": ["string"],
       "unstated": ["string"]
@@ -391,9 +392,9 @@ Return ONLY valid JSON with this structure:
       "type": "string",
       "description": "string",
       "severity": "CRITICAL" | "HIGH" | "MEDIUM" | "WARNING",
-      "evidence": "string",
+      "evidence": "string (MAX 150 CHARACTERS)",
       "requiresAction": "string",
-      "recommendation": "string",
+      "recommendation": "string (MAX 150 CHARACTERS)",
       "requiresHumanReview": boolean
     }
   ],
