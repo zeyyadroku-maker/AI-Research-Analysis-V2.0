@@ -197,6 +197,7 @@ export interface DocumentClassification {
   documentType: string
   field: string
   confidence: ConfidenceLevel
+  source?: string // 'OpenAlex', 'DOI', 'PDF Upload', etc.
 }
 
 // Complete Analysis Result (Framework v2.0)

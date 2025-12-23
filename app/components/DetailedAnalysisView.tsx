@@ -382,6 +382,7 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                         field={analysis.paper.field}
                         subfield={analysis.paper.subfield}
                         domain={analysis.paper.domain}
+                        source={analysis.classification?.source || 'OpenAlex'}
                       />
                     </div>
                   </div>

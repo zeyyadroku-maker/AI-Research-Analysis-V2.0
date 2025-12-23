@@ -16,8 +16,8 @@ export const ACADEMIC_FIELD_PATTERNS = {
         /\b(nuclei|electron|photon|energy|wavelength|frequency|atom|molecule|organic|inorganic|reaction|compound|isotope|element|mineral|rock|fossil|species|organism|cell|gene|protein|dna|enzyme|metabolism|photosynthesis|evolution|natural selection)\b/
     ],
     'engineering': [
-        /\b(engineering|software|algorithm|circuit|mechanical|electrical|civil|computer science|programming|coding|database|system|network|automation|manufacturing|construction|infrastructure|hardware|firmware|application|framework|api|framework|design pattern|agile|devops|cloud)\b/,
-        /\b(mechanical|structural|thermal|fluid|stress|strength|load|efficiency|optimization|control|signal|processing|encryption|architecture|module|component|integration|testing|deployment|scalability)\b/
+        /\b(engineering|software|algorithm|circuit|mechanical|electrical|civil|computer science|programming|coding|database|system|network|automation|manufacturing|construction|infrastructure|hardware|firmware|application|framework|api|framework|design pattern|agile|devops|cloud|artificial intelligence|machine learning|deep learning|neural network|nlp|robotics|computer vision|transformer|llm|generative ai)\b/,
+        /\b(mechanical|structural|thermal|fluid|stress|strength|load|efficiency|optimization|control|signal|processing|encryption|architecture|module|component|integration|testing|deployment|scalability|predictive model|training data|inference|latency|throughput)\b/
     ],
     'medical': [
         /\b(medical|clinical|pharmaceutical|medicine|health|disease|patient|treatment|diagnosis|therapy|surgery|nursing|hospital|prescription|medication|drug|vaccine|infection|inflammation|symptom|pathology|anatomy|physiology|oncology|cardiology|neurology|psychiatry|dermatology|pediatrics|geriatrics)\b/,

@@ -14,6 +14,13 @@ import { processCredibilityScore } from '@/app/lib/utils/analysisUtils'
 
 type TabType = 'search' | 'upload'
 
+const getDocumentSource = (paper: Partial<Paper>): string => {
+  if (paper.doi) return 'DOI'
+  if (paper.openAlexId) return 'OpenAlex'
+  if (paper.id?.startsWith('file-')) return 'PDF Upload'
+  return 'OpenAlex' // Default
+}
+
 // Helper to create an empty/loading analysis result
 const createEmptyAnalysisResult = (paper: Paper, metadata?: any): AnalysisResult => {
   return {
@@ -26,6 +33,7 @@ const createEmptyAnalysisResult = (paper: Paper, metadata?: any): AnalysisResult
       documentType: metadata?.documentType || 'unknown',
       field: metadata?.field || 'unknown',
       confidence: 'MEDIUM',
+      source: getDocumentSource(paper)
     },
     credibility: {
       totalScore: 0,
@@ -464,10 +472,16 @@ export default function SearchPage() {
           const finalAnalysis: AnalysisResult = {
             ...createEmptyAnalysisResult(paper, metadata),
             ...finalJson,
+            // Ensure paper matches classification if AI updated it
             paper: {
               ...paper,
-              documentType: metadata?.documentType || paper.documentType,
-              field: metadata?.field || paper.field,
+              documentType: finalJson.classification?.documentType || metadata?.documentType || paper.documentType,
+              field: finalJson.classification?.field || metadata?.field || paper.field,
+            },
+            // Ensure source is preserved
+            classification: {
+              ...finalJson.classification,
+              source: getDocumentSource(paper)
             },
             timestamp: new Date().toISOString()
           }

@@ -113,7 +113,7 @@ export default function FileUploadTab({
       // For now, let's duplicate the minimal structure needed for the view to render loading state.
       let currentAnalysis: AnalysisResult = {
         paper: initialPaper,
-        classification: { documentType: 'unknown', field: 'unknown', confidence: 'MEDIUM' },
+        classification: { documentType: 'unknown', field: 'unknown', confidence: 'MEDIUM', source: 'PDF Upload' },
         credibility: {
           totalScore: 0,
           maxTotalScore: 10,
@@ -177,7 +177,7 @@ export default function FileUploadTab({
                 currentAnalysis = {
                   ...currentAnalysis,
                   paper: { ...currentAnalysis.paper, documentType: metadata.documentType, field: metadata.field },
-                  classification: { ...currentAnalysis.classification, documentType: metadata.documentType, field: metadata.field }
+                  classification: { ...currentAnalysis.classification, documentType: metadata.documentType, field: metadata.field, source: 'PDF Upload' }
                 }
                 onAnalysisComplete?.(currentAnalysis)
               }

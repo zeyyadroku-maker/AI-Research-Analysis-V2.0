@@ -153,7 +153,7 @@ export function classifyAcademicField(text: string, title?: string): AcademicFie
   if (sortedFields.length === 0 || sortedFields[0][1] === 0) {
     // Fallback logic: check for broad academic terms
     if (combined.match(/experiment|lab|data|measurement/)) return 'natural-sciences'
-    return 'social-sciences' // Default fallback
+    return 'interdisciplinary' // Default fallback
   }
 
   const topField = sortedFields[0][0] as AcademicField

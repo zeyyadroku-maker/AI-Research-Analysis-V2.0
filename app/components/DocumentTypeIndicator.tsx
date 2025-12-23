@@ -8,6 +8,7 @@ interface DocumentTypeIndicatorProps {
   field?: string // OpenAlex field (takes precedence)
   subfield?: string // OpenAlex subfield
   domain?: string // OpenAlex domain
+  source?: string // 'OpenAlex', 'DOI', 'PDF Upload'
   compact?: boolean
 }
 
@@ -31,6 +32,7 @@ export default function DocumentTypeIndicator({
   field,
   subfield,
   domain,
+  source = 'OpenAlex',
   compact = false,
 }: DocumentTypeIndicatorProps) {
   const docTypeKey = documentTypeString || documentType || 'unknown'
@@ -61,7 +63,7 @@ export default function DocumentTypeIndicator({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 dark:border-dark-600 pb-2">
           <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Document Classification</h4>
-          <span className="text-xs text-primary-600 dark:text-primary-400 font-medium">OpenAlex</span>
+          <span className="text-xs text-primary-600 dark:text-primary-400 font-medium">{source}</span>
         </div>
 
         {/* Type */}
