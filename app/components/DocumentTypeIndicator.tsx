@@ -43,12 +43,20 @@ export default function DocumentTypeIndicator({
     return (
       <div className="flex gap-2 items-center">
         <span
+<<<<<<< HEAD
           className={`px-3 py-1 rounded text-xs font-semibold text-white ${docInfo.color}`}
+=======
+          className={`px-3 py-1 rounded text-xs font-semibold text-white truncate max-w-[120px] ${docInfo.color}`}
+>>>>>>> a139a58f2dfdcb1522d73f29ad33f1b9872ba1bc
           title={docInfo.label}
         >
           {docInfo.label}
         </span>
+<<<<<<< HEAD
         <span className="px-3 py-1 rounded text-xs font-semibold bg-gray-600 text-white" title={fieldDisplay}>
+=======
+        <span className="px-3 py-1 rounded text-xs font-semibold bg-gray-600 text-white truncate max-w-[150px]" title={fieldDisplay}>
+>>>>>>> a139a58f2dfdcb1522d73f29ad33f1b9872ba1bc
           {fieldDisplay}
         </span>
       </div>
@@ -67,18 +75,30 @@ export default function DocumentTypeIndicator({
         {/* Type */}
         <div className="flex items-center justify-between">
           <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</div>
+<<<<<<< HEAD
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${docInfo.color}`}></div>
             <span className="text-sm font-semibold text-gray-900 dark:text-white">{docInfo.label}</span>
+=======
+          <div className="flex items-center gap-2 overflow-hidden pl-4">
+            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${docInfo.color}`}></div>
+            <span className="text-sm font-semibold text-gray-900 dark:text-white truncate" title={docInfo.label}>{docInfo.label}</span>
+>>>>>>> a139a58f2dfdcb1522d73f29ad33f1b9872ba1bc
           </div>
         </div>
 
         {/* Field */}
         <div className="flex items-center justify-between">
           <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Field</div>
+<<<<<<< HEAD
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-primary-500"></div>
             <span className="text-sm font-semibold text-gray-900 dark:text-white">{fieldDisplay}</span>
+=======
+          <div className="flex items-center gap-2 overflow-hidden pl-4">
+            <div className="w-2 h-2 rounded-full bg-primary-500 flex-shrink-0"></div>
+            <span className="text-sm font-semibold text-gray-900 dark:text-white truncate" title={fieldDisplay}>{fieldDisplay}</span>
+>>>>>>> a139a58f2dfdcb1522d73f29ad33f1b9872ba1bc
           </div>
         </div>
       </div>
