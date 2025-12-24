@@ -23,7 +23,7 @@ const documentTypeLabels: Record<string, { label: string; color: string }> = {
   theoretical: { label: 'Theoretical Work', color: 'bg-yellow-500' },
   preprint: { label: 'Preprint', color: 'bg-red-500' },
   conference: { label: 'Conference Paper', color: 'bg-teal-500' },
-  unknown: { label: 'Unknown Type', color: 'bg-gray-500' },
+  unknown: { label: 'Unclassified', color: 'bg-gray-400' },
 }
 
 export default function DocumentTypeIndicator({
@@ -61,15 +61,15 @@ export default function DocumentTypeIndicator({
     <div className="bg-white dark:bg-dark-700 rounded-lg p-6 mb-4 border border-gray-200 dark:border-dark-600">
       <div className="space-y-3">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 dark:border-dark-600 pb-2">
-          <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Document Classification</h4>
-          <span className="text-xs text-primary-600 dark:text-primary-400 font-medium">{source}</span>
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-dark-600 pb-2 gap-2">
+          <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider truncate">Document Classification</h4>
+          <span className="text-xs text-primary-600 dark:text-primary-400 font-medium whitespace-nowrap">{source}</span>
         </div>
 
         {/* Type */}
         <div className="flex items-center justify-between">
-          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</div>
-          <div className="flex items-center gap-2 overflow-hidden pl-4">
+          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex-shrink-0">Type</div>
+          <div className="flex items-center gap-2 overflow-hidden pl-4 min-w-0 text-right">
             <div className={`w-2 h-2 rounded-full flex-shrink-0 ${docInfo.color}`}></div>
             <span className="text-sm font-semibold text-gray-900 dark:text-white truncate" title={docInfo.label}>{docInfo.label}</span>
           </div>
@@ -77,8 +77,8 @@ export default function DocumentTypeIndicator({
 
         {/* Field */}
         <div className="flex items-center justify-between">
-          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Field</div>
-          <div className="flex items-center gap-2 overflow-hidden pl-4">
+          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex-shrink-0">Field</div>
+          <div className="flex items-center gap-2 overflow-hidden pl-4 min-w-0 text-right">
             <div className="w-2 h-2 rounded-full bg-primary-500 flex-shrink-0"></div>
             <span className="text-sm font-semibold text-gray-900 dark:text-white truncate" title={fieldDisplay}>{fieldDisplay}</span>
           </div>
