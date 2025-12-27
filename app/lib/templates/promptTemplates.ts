@@ -236,6 +236,21 @@ What Makes Research Credible:
 - Terminology used consistently
 - Limitations of each field acknowledged
 - Synthesis is logical
+`,
+  'unknown': `
+UNKNOWN FIELD EVALUATION CRITERIA:
+
+Priority Focus:
+- Clarity of Presentation: HIGH
+- Logic and Argumentation: HIGH
+- Credibility of Sources: HIGH
+
+What Makes Research Credible:
+- Claims are logical and well-supported
+- Evidence is traceable
+- Methods (if any) are described clearly
+- Author identifies their perspective
+- Conclusions follow from premises
 `
 }
 
