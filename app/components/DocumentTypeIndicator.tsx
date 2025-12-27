@@ -41,18 +41,22 @@ export default function DocumentTypeIndicator({
   const effectiveField = (field && field !== 'unknown') ? field : null
   const effectiveSubfield = (subfield && subfield !== 'unknown') ? subfield : null
 
-  const fieldDisplay = effectiveField || effectiveSubfield || domain || 'Multidisciplinary'
+  const fieldDisplay = effectiveField || effectiveSubfield || domain || 'Unspecified Field'
+
+  // If type is unknown, fallback to "Pending Analysis" if it seems appropriate, or just show the label
+  const displayLabel = docTypeKey === 'unknown' ? 'Pending Analysis...' : docInfo.label
+  const displayColor = docTypeKey === 'unknown' ? 'bg-gray-400 animate-pulse' : docInfo.color
 
   if (compact) {
     return (
       <div className="flex gap-2 items-center">
         <span
-          className={`px-3 py-1 rounded text-xs font-semibold text-white ${docInfo.color}`}
-          title={docInfo.label}
+          className={`px-3 py-1 rounded text-xs font-semibold text-white ${displayColor} flex-shrink-0`}
+          title={displayLabel}
         >
-          {docInfo.label}
+          {displayLabel}
         </span>
-        <span className="px-3 py-1 rounded text-xs font-semibold bg-gray-600 text-white" title={fieldDisplay}>
+        <span className="px-3 py-1 rounded text-xs font-semibold bg-gray-600 text-white truncate max-w-[150px]" title={fieldDisplay}>
           {fieldDisplay}
         </span>
       </div>
@@ -60,34 +64,26 @@ export default function DocumentTypeIndicator({
   }
 
   return (
-    <div className="bg-white dark:bg-dark-700 rounded-lg p-6 mb-4 border border-gray-200 dark:border-dark-600">
-      <div className="space-y-3">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 dark:border-dark-600 pb-2">
-          <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Document Classification</h4>
-          {/* Removed OpenAlex label as it may be AI generated */}
+    <div className="w-full">
+      {/* Type */}
+      <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-dark-600/50 last:border-0">
+        <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex-shrink-0 mr-4">Type</div>
+        <div className="flex items-center gap-2 text-right min-w-0">
+          <div className={`w-2.5 h-2.5 rounded-full ${displayColor} flex-shrink-0 shadow-sm ring-1 ring-white dark:ring-dark-800`}></div>
+          <span className="text-sm font-bold text-gray-900 dark:text-white truncate leading-tight">{displayLabel}</span>
         </div>
-
-        {/* Type */}
-        <div className="flex items-center justify-between">
-          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</div>
-          <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${docInfo.color}`}></div>
-            <span className="text-sm font-semibold text-gray-900 dark:text-white">{docInfo.label}</span>
-          </div>
-        </div>
-
-        {/* Field - Only show if we have some info or if it's not unknown/unspecified */}
-        {(fieldDisplay !== 'Multidisciplinary' || field === 'interdisciplinary') && (
-          <div className="flex items-center justify-between">
-            <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Field</div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary-500"></div>
-              <span className="text-sm font-semibold text-gray-900 dark:text-white">{fieldDisplay}</span>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Field */}
+      {(fieldDisplay !== 'Multidisciplinary' || field === 'interdisciplinary') && fieldDisplay !== 'Unspecified Field' && (
+        <div className="flex items-center justify-between py-2">
+          <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex-shrink-0 mr-4">Field</div>
+          <div className="flex items-center gap-2 text-right min-w-0">
+            <div className="w-2.5 h-2.5 rounded-full bg-primary-500 flex-shrink-0 shadow-sm ring-1 ring-white dark:ring-dark-800"></div>
+            <span className="text-sm font-bold text-gray-900 dark:text-white truncate leading-tight">{fieldDisplay}</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
