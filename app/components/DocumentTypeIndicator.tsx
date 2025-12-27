@@ -41,7 +41,15 @@ export default function DocumentTypeIndicator({
   const effectiveField = (field && field !== 'unknown') ? field : null
   const effectiveSubfield = (subfield && subfield !== 'unknown') ? subfield : null
 
-  const fieldDisplay = effectiveField || effectiveSubfield || domain || 'Unspecified Field'
+  let fieldDisplay = effectiveField || effectiveSubfield || domain || 'Unspecified Field'
+
+  // Format field display: remove dashes, title case
+  if (fieldDisplay && fieldDisplay !== 'Unspecified Field') {
+    fieldDisplay = fieldDisplay
+      .split(/[-_]/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
 
   // Determine display label:
   // 1. If we have a mapped label, use it.
