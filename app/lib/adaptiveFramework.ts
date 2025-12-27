@@ -153,7 +153,6 @@ export function classifyAcademicField(text: string, title?: string): AcademicFie
 
   // Return unknown if no strong match found
   if (sortedFields.length === 0 || sortedFields[0][1] === 0) {
-    if (combined.match(/experiment|lab|data|measurement/)) return 'natural-sciences'
     return 'unknown'
   }
 
