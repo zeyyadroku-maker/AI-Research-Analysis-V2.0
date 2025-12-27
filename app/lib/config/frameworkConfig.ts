@@ -130,6 +130,7 @@ export const FIELD_ADJUSTMENTS: Record<AcademicField, Partial<FrameworkWeights>>
         statisticalValidity: 0.2,
     },
     'interdisciplinary': {},
+    'unknown': {},
 }
 
 export const BIAS_PRIORITIES: Record<AcademicField, string[]> = {
@@ -180,6 +181,11 @@ export const BIAS_PRIORITIES: Record<AcademicField, string[]> = {
         'Disciplinary assumption conflicts',
         'Method appropriateness across domains',
         'Oversimplification of complexity',
+    ],
+    'unknown': [
+        'Unclear disciplinary standards',
+        'Undefined methodological expectations',
+        'Ambiguous context',
     ],
 }
 
@@ -371,5 +377,10 @@ export const COMMON_ASSUMPTIONS: Record<AcademicField, string[]> = {
         'Methods from one field apply to another',
         'Interdisciplinary synthesis adds value',
         'Disciplinary boundaries are not essential',
+    ],
+    'unknown': [
+        'Basic academic standards apply',
+        'Claims require evidence',
+        'Logic must be consistent',
     ],
 }
