@@ -197,6 +197,7 @@ export interface DocumentClassification {
   documentType: string
   field: string
   confidence: ConfidenceLevel
+  source?: 'DOI' | 'AI' | 'USER' // Source of the classification for UI display priority
 }
 
 // Complete Analysis Result (Framework v2.0)

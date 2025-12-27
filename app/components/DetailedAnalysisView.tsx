@@ -376,13 +376,29 @@ Disciplinary Perspective: ${analysis.perspective.disciplinaryPerspective}
                       <Brain className="w-4 h-4 text-purple-500" />
                       <span className="text-sm font-bold uppercase tracking-wider">Classification</span>
                     </div>
-                    <div className="w-full flex justify-center">
+                    <div className="w-full flex flex-col items-center justify-center">
                       <DocumentTypeIndicator
                         documentTypeString={analysis.paper.documentType}
                         field={analysis.paper.field}
                         subfield={analysis.paper.subfield}
                         domain={analysis.paper.domain}
                       />
+                      <div className="mt-3">
+                        {analysis.classification.source === 'DOI' ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 border border-blue-100 dark:border-blue-800/50" title="This classification comes directly from verifiable DOI metadata">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                            </span>
+                            Verified Source (DOI)
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-gray-700" title="This classification was inferred by AI based on the document content">
+                            <Sparkles className="w-3 h-3" />
+                            AI Inferred
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -26,6 +26,7 @@ const createEmptyAnalysisResult = (paper: Paper, metadata?: any): AnalysisResult
       documentType: metadata?.documentType || 'unknown',
       field: metadata?.field || 'unknown',
       confidence: 'MEDIUM',
+      source: metadata?.source || 'AI',
     },
     credibility: {
       totalScore: 0,
@@ -441,8 +442,15 @@ export default function SearchPage() {
             if (classificationMatch) {
               try {
                 const classData = JSON.parse(classificationMatch[1])
-                if (currentAnalysis.paper.documentType !== classData.documentType ||
-                  currentAnalysis.paper.field !== classData.field) {
+
+                // Deterministic Override Rule:
+                // If the current analysis has a verified 'DOI' source, 
+                // we do NOT allow the AI stream to override the classification 
+                // unless the current one is unknown/generic.
+                const isDoiLocked = currentAnalysis.classification.source === 'DOI'
+
+                if (!isDoiLocked && (currentAnalysis.paper.documentType !== classData.documentType ||
+                  currentAnalysis.paper.field !== classData.field)) {
                   currentAnalysis = {
                     ...currentAnalysis,
                     paper: {
@@ -450,7 +458,10 @@ export default function SearchPage() {
                       documentType: classData.documentType,
                       field: classData.field
                     },
-                    classification: classData
+                    classification: {
+                      ...classData,
+                      source: 'AI' // Stream updates are always AI sourced
+                    }
                   }
                   setAnalysis(currentAnalysis)
                 }

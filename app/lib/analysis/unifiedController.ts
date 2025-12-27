@@ -58,6 +58,19 @@ export async function performUnifiedAnalysis(
         ? paper.field
         : field
 
+    // Helper to check if a type is generic/unknown
+    const isGenericType = (type: string) => {
+        const lower = type.toLowerCase()
+        return ['unknown', 'n/a', 'undefined', 'null', '', 'general', 'miscellaneous'].includes(lower)
+    }
+
+    // Deterministic Source Logic:
+    // If we have a specific (non-generic) type from the paper metadata (DOI), source is DOI.
+    // Otherwise, source is AI (inferred).
+    const classificationSource = !isGenericType(specificDocumentType) ? 'DOI' : 'AI'
+
+    console.log(`[Unified Analysis] Classified as ${documentType} (${specificDocumentType}) in ${field} (${specificField}) - Source: ${classificationSource}`)
+
     console.log(`[Unified Analysis] Classified as ${documentType} (${specificDocumentType}) in ${field} (${specificField})`)
 
     const prompt = buildFrameworkV2Prompt({
@@ -88,6 +101,7 @@ export async function performUnifiedAnalysis(
                 data: {
                     documentType: specificDocumentType,
                     field: specificField,
+                    source: classificationSource,
                     framework
                 }
             }
