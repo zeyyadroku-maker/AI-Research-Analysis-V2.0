@@ -147,6 +147,10 @@ export function classifyAcademicField(text: string, title?: string): AcademicFie
   }
 
   // Find the highest scoring field
+  const sortedFields = Object.entries(fieldScores)
+    .filter(([field]) => field !== 'interdisciplinary')
+    .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)
+
   // Return unknown if no strong match found
   if (sortedFields.length === 0 || sortedFields[0][1] === 0) {
     if (combined.match(/experiment|lab|data|measurement/)) return 'natural-sciences'
