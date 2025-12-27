@@ -132,6 +132,7 @@ export function classifyAcademicField(text: string, title?: string): AcademicFie
     'humanities': 0,
     'formal-sciences': 0,
     'interdisciplinary': 0,
+    'unknown': 0
   }
 
   // Score each field based on keyword matches
@@ -148,8 +149,8 @@ export function classifyAcademicField(text: string, title?: string): AcademicFie
   // Find the highest scoring field
   // Return unknown if no strong match found
   if (sortedFields.length === 0 || sortedFields[0][1] === 0) {
-      if (combined.match(/experiment|lab|data|measurement/)) return 'natural-sciences'
-      return 'unknown'
+    if (combined.match(/experiment|lab|data|measurement/)) return 'natural-sciences'
+    return 'unknown'
   }
 
   const topField = sortedFields[0][0] as AcademicField
