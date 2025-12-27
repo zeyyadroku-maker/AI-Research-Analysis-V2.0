@@ -13,6 +13,8 @@ export interface FrameworkPromptContext {
   documentTitle?: string
   documentType: DocumentType
   field: AcademicField
+  specificDocumentType?: string // Specific type from DOI/Metadata if available
+  specificField?: string // Specific field from DOI/Metadata if available
   framework: FrameworkGuidelines
   fullText: string
   abstract?: string
@@ -40,15 +42,15 @@ ${buildAIHonestyRequirements()}
 ${buildOutputFormat(context)}
 
 STEP 1: CLASSIFICATION VERIFICATION
-Verify the assigned Document Type (${context.documentType}) and Field (${context.field}).
+Verify the assigned Document Type (${context.specificDocumentType || context.documentType}) and Field (${context.specificField || context.field}).
 The provided classification may be a heuristic guess ("unknown"). You MUST analyze the content to determine the authoritative Document Type and Academic Field.
 Do NOT output "unknown" unless the document is completely unreadable. Infer the BEST FIT type and field based on content, structure, and intent.
 Explicitly note any discrepancy in the 'classification' output field.
 
 DOCUMENT TO ANALYZE:
 Title: ${context.documentTitle || 'Unknown'}
-Document Type: ${context.documentType}
-Field: ${context.field}
+Document Type: ${context.specificDocumentType || context.documentType}
+Field: ${context.specificField || context.field}
 
 ${context.fullText.substring(0, 150000)} ${context.fullText.length > 150000 ? '[... document continues ...]' : ''}
 

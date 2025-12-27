@@ -49,12 +49,23 @@ export async function performUnifiedAnalysis(
 
     const framework = getFrameworkGuidelines(documentType, field)
 
-    console.log(`[Unified Analysis] Classified as ${documentType} in ${field}`)
+    // Preserve specific metadata if available (e.g. from DOI)
+    const specificDocumentType = (paper.documentType && paper.documentType !== 'unknown')
+        ? paper.documentType
+        : documentType
+
+    const specificField = (paper.field && paper.field !== 'unknown')
+        ? paper.field
+        : field
+
+    console.log(`[Unified Analysis] Classified as ${documentType} (${specificDocumentType}) in ${field} (${specificField})`)
 
     const prompt = buildFrameworkV2Prompt({
         documentTitle: paper.title,
         documentType,
         field,
+        specificDocumentType,
+        specificField,
         framework,
         fullText: analysisText,
         abstract: paper.abstract || '',
@@ -75,8 +86,8 @@ export async function performUnifiedAnalysis(
             const metadata = {
                 type: 'metadata',
                 data: {
-                    documentType,
-                    field,
+                    documentType: specificDocumentType,
+                    field: specificField,
                     framework
                 }
             }
