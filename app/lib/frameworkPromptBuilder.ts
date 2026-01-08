@@ -25,7 +25,7 @@ export function buildFrameworkV2Prompt(context: FrameworkPromptContext): string 
 You are implementing the Syllogos Research Evaluation Framework v2.0.
 You are an expert research analyst with deep understanding of academic rigor, bias detection, and honest uncertainty acknowledgment.
 
-    ${buildScoringPhilosophy()}
+${buildScoringPhilosophy()}
 
 ${buildCalibrationExamples()}
 
@@ -43,18 +43,23 @@ ${buildOutputFormat(context)}
 
 STEP 1: CLASSIFICATION VERIFICATION
 Verify the assigned Document Type(${context.specificDocumentType || context.documentType}) and Field(${context.specificField || context.field}).
-The provided classification may be a heuristic guess("unknown").You MUST analyze the content to determine the authoritative Document Type and Academic Field.
-Do NOT output "unknown" unless the document is completely unreadable.Infer the BEST FIT type and field based on content, structure, and intent.
+The provided classification may be a heuristic guess("unknown"). You MUST analyze the content to determine the authoritative Document Type and Academic Field.
+Do NOT output "unknown" unless the document is completely unreadable. Infer the BEST FIT type and field based on content, structure, and intent.
 Explicitly note any discrepancy in the 'classification' output field.
 
 DOCUMENT TO ANALYZE:
   Title: ${context.documentTitle || 'Unknown'}
-Document Type: ${context.specificDocumentType || context.documentType}
+  Document Type: ${context.specificDocumentType || context.documentType}
   Field: ${context.specificField || context.field}
 
 ${context.fullText.substring(0, 150000)} ${context.fullText.length > 150000 ? '[... document continues ...]' : ''}
 
 CRITICAL INSTRUCTION:
+1. **Calibration**: Be conservative. A **Total Credibility Score** > 8.0 is rare. A score > 9.0 is exceptional. Perfect component scores (e.g., 2.5/2.5) require absolute proof.
+2. **Speed & Structure**: The JSON is ordered to provide high-signal insights (Findings) first. Process these efficiently.
+3. **Depth**: In "Credibility" and "Bias", provide deep, evidence-based reasoning. Do not be vague.
+4. **Honesty**: If you cannot find something, say "Not Found" or "Uncertain". Do not hallucinate.
+
 You MUST return ONLY valid JSON.
 Do not include markdown formatting(like \`\`\`json).
 Do not include any text before or after the JSON object.

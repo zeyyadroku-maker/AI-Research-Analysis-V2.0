@@ -2,19 +2,24 @@ import type { FrameworkPromptContext } from '../frameworkPromptBuilder'
 import { AcademicField } from '../adaptiveFramework'
 
 export const SCORING_PHILOSOPHY = `
-## SCORING CALIBRATION
-1. **Credit Existing Work**: Score what is present. A review paper isn't transparent about raw data but can be about sources.
-2. **Context Matters**: Standards vary by type (Review vs Empirical) and field.
-3. **Distribution**: 9-10 (Exemplary, Top 5%), 7.5-8.9 (Strong, Top 30%), 6-7.4 (Moderate), 4-5.9 (Weak), <4 (Poor).
-4. **Uncertainty**: Default to middle if unsure. Use "UNCERTAIN" only for genuinely missing critical info, not just "some gaps".
-5. **Conciseness**: Descriptions MUST be 30-40 words.
+## SCORING PHILOSOPHY & CALIBRATION
+1. **Conservative by Default**: Start from a neutral baseline (6/10). Scores above 8.0 require EXCEPTIONAL evidence. Scores above 9.0 are reserved for transformative, flawless work.
+2. **Burden of Proof**: Do not give the benefit of the doubt for missing information. If a critical methodological detail is missing, penalize it. "Implied" rigor is not sufficient.
+3. **Evidence-Based Scoring**:
+   - **8.0 - 10.0**: Must cite specific, verifiable evidence (data transparency, open code, rigorous controls) that exceeds standard practices.
+   - **6.0 - 7.9**: Meets standard field requirements with minor flaws or standard opacity.
+   - **< 6.0**: Significant missing information, methodological flaws, or lack of transparency.
+4. **Contextual Calibration**: Evaluate relative to the specifically identified exact Document Type and Field. A "review" paper needs rigorous search strategy/synthesis, not new experiments.
+5. **Justification is Mandarin**: Low or High scores must be explicitly justified with "Why".
+6. **Depth over Conciseness**: Do NOT restrict reasoning to 30-40 words. Provide as much depth as necessary to fully justify the score and critique.
 `
 
 export const CALIBRATION_EXAMPLES = `
 ## CALIBRATION EXAMPLES
-- **Strong (Nature CS)**: 8.8/10. Open source code (2/2), established experts (1.5/1.5). Descriptive stats only (1/1.5).
-- **Adequate Preprint**: 7.2/10. Solid but needs review.
-- **Weak**: 4.5/10. Convenience sample, opaque methods.
+- **Inflated (Incorrect)**: "8.5/10. The study is well-conducted." (Too vague, score too high for generic praise)
+- **Calibrated (Correct)**: "6.5/10. The study design is standard. While the sample size is adequate (N=400), the lack of pre-registration and raw data availability prevents a higher score."
+- **High Score (Correct)**: "9.2/10. Exemplary rigor. Full pre-registration (OSF linked), open data/code provided, and multi-center replication included. Power analysis justifies N=1200."
+- **Low Score (Correct)**: "4.0/10. Critical flaw: The conclusion claims causality from a purely observational design without controlling for obvious confounders."
 `
 
 export const BIAS_DETECTION_GUIDE = `
@@ -95,12 +100,23 @@ export const FIELD_SPECIFIC_CRITERIA: Record<AcademicField, string> = {
 export function getOutputFormatTemplate(context: FrameworkPromptContext): string {
   return `
 ## OUTPUT FORMAT
-Return ONLY valid JSON:
+Return ONLY valid JSON.
+**CRITICAL**: "evidence" arrays must contain specific quotes or data points. "reasoning" must explain *why* the evidence leads to the score, noting specific strengths/weaknesses.
+
 {
   "classification": {
     "documentType": "string",
     "field": "string",
     "confidence": "HIGH/MEDIUM/LOW/UNCERTAIN"
+  },
+  "keyFindings": {
+    "fundamentals": { "title": "string", "authors": ["string"], "journal": "string", "doi": "string", "publicationDate": "string", "articleType": "string" },
+    "researchQuestion": "string",
+    "hypothesis": "string",
+    "methodology": { "studyDesign": "string", "sampleSize": "string", "population": "string", "samplingMethod": "string", "setting": "string", "intervention": "string", "comparisonGroups": "string", "outcomesMeasures": ["string"], "statisticalMethods": ["string"], "studyDuration": "string" },
+    "findings": { "primaryFindings": ["string"], "secondaryFindings": ["string"], "effectSizes": ["string"], "clinicalSignificance": "string", "unexpectedFindings": ["string"] },
+    "limitations": { "authorAcknowledged": ["string"], "methodologicalIdentified": ["string"], "severity": "Minor/Moderate/Major" },
+    "conclusions": { "primaryConclusion": "string", "supportedByData": boolean, "practicalImplications": ["string"], "futureResearchNeeded": ["string"], "recommendations": ["string"], "generalizability": "string" }
   },
   "credibility": {
     "methodologicalRigor": { "score": number, "maxScore": ${context.framework.weights.methodologicalRigor}, "description": "string", "evidence": ["string"], "confidence": "string", "reasoning": "string", "limitations": ["string"] },
@@ -119,15 +135,6 @@ Return ONLY valid JSON:
     "overallConfidence": "string",
     "justification": "string"
   },
-  "keyFindings": {
-    "fundamentals": { "title": "string", "authors": ["string"], "journal": "string", "doi": "string", "publicationDate": "string", "articleType": "string" },
-    "researchQuestion": "string",
-    "hypothesis": "string",
-    "methodology": { "studyDesign": "string", "sampleSize": "string", "population": "string", "samplingMethod": "string", "setting": "string", "intervention": "string", "comparisonGroups": "string", "outcomesMeasures": ["string"], "statisticalMethods": ["string"], "studyDuration": "string" },
-    "findings": { "primaryFindings": ["string"], "secondaryFindings": ["string"], "effectSizes": ["string"], "clinicalSignificance": "string", "unexpectedFindings": ["string"] },
-    "limitations": { "authorAcknowledged": ["string"], "methodologicalIdentified": ["string"], "severity": "Minor/Moderate/Major" },
-    "conclusions": { "primaryConclusion": "string", "supportedByData": boolean, "practicalImplications": ["string"], "futureResearchNeeded": ["string"], "recommendations": ["string"], "generalizability": "string" }
-  },
   "perspective": {
     "theoreticalFramework": "string",
     "paradigm": "string",
@@ -145,3 +152,4 @@ Return ONLY valid JSON:
 }
 `
 }
+
